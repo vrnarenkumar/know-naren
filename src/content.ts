@@ -1,7 +1,7 @@
 export const hero = {
   name: 'Narenkumar V R',
   title: 'Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure',
-  roles: ['Senior Software Engineer', 'ML Engineer', 'MLOps Engineer', 'GenAI Builder', 'AI Systems Engineer'],
+  roles: ['Generative AI', 'Agentic Systems', 'MLOps', 'AI Systems & Infrastructure'],
   eyebrow: 'Shipping AI Systems at Ford Motor Co.',
   summary:
     'Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scaling AI solutions end-to-end, from prototype to production.',
