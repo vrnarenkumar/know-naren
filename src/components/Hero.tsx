@@ -25,9 +25,6 @@ export default function Hero() {
       id="hero"
       className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always items-center overflow-hidden px-6"
     >
-      <div className="glow-orb -left-24 top-24 h-72 w-72 bg-accent/20" />
-      <div className="glow-orb -right-24 bottom-24 h-72 w-72 bg-accent-2/15" />
-
       <div className="relative mx-auto grid w-full max-w-5xl items-center gap-16 lg:grid-cols-[1.2fr_1fr]">
         <div className="text-center lg:text-left">
           <motion.span

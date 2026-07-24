@@ -1,4 +1,3 @@
-import { motion } from 'framer-motion'
 import Nav from './components/Nav'
 import Hero from './components/Hero'
 import Stats from './components/Stats'
@@ -22,11 +21,6 @@ function App() {
           id="about"
           className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col justify-center overflow-hidden"
         >
-          <motion.div
-            animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
-            transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-            className="glow-orb left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 bg-accent/10"
-          />
           <div className="relative">
             <Stats />
             <TechMarquee />

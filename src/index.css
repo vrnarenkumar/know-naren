@@ -3,7 +3,7 @@
 @theme {
   --font-sans: 'Inter', system-ui, 'Segoe UI', Roboto, sans-serif;
 
-  --color-bg: #05060a;
+  --color-bg: #000000;
   --color-surface: #0d0f16;
   --color-surface-2: #12141d;
   --color-border: #22242f;
@@ -51,16 +51,7 @@
   }
 
   .bg-hero-gradient {
-    background:
-      radial-gradient(ellipse 90% 55% at 50% -10%, rgba(255, 255, 255, 0.07), transparent 65%),
-      linear-gradient(180deg, #0b0c12 0%, var(--color-bg) 55%, #000000 100%);
-  }
-
-  .glow-orb {
-    position: absolute;
-    border-radius: 9999px;
-    filter: blur(90px);
-    pointer-events: none;
+    background: var(--color-bg);
   }
 
   .gradient-border {

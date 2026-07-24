@@ -11,11 +11,6 @@ export default function Footer() {
       className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col items-center justify-center overflow-hidden border-t border-border px-6 text-center"
     >
       <motion.div
-        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
-        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
-        className="glow-orb left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 bg-accent/10"
-      />
-      <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
