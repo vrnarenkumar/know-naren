@@ -23,7 +23,7 @@ export default function Hero() {
   return (
     <section
       id="hero"
-      className="bg-glow relative flex min-h-screen w-full items-center overflow-hidden px-6 pt-24"
+      className="bg-glow relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always items-center overflow-hidden px-6"
     >
       <div className="bg-grid absolute inset-0" />
       <div className="glow-orb -left-24 top-24 h-72 w-72 bg-accent/30" />

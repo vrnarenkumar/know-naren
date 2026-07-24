@@ -6,7 +6,7 @@ const icons = [Clock, Users, Rocket, DollarSign]
 
 export default function Stats() {
   return (
-    <div className="mx-auto -mt-10 w-full max-w-5xl px-6">
+    <div className="mx-auto w-full max-w-5xl px-6">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {stats.map((s, i) => {
           const Icon = icons[i]

@@ -6,12 +6,21 @@ export default function Footer() {
   const year = new Date().getFullYear()
 
   return (
-    <footer id="contact" className="border-t border-border px-6 py-16 text-center">
+    <footer
+      id="contact"
+      className="relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col items-center justify-center overflow-hidden border-t border-border px-6 text-center"
+    >
+      <motion.div
+        animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
+        transition={{ duration: 9, repeat: Infinity, ease: 'easeInOut' }}
+        className="glow-orb left-1/2 top-1/2 h-[28rem] w-[28rem] -translate-x-1/2 -translate-y-1/2 bg-accent/10"
+      />
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.4 }}
         transition={{ duration: 0.5, ease: 'easeOut' }}
+        className="relative"
       >
         <h2 className="text-2xl font-bold text-text-h">Let's build something together.</h2>
         <p className="mt-2 text-text-dim">Open to new opportunities and interesting problems.</p>

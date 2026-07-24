@@ -5,7 +5,7 @@ const loop = [...items, ...items]
 
 export default function TechMarquee() {
   return (
-    <div className="mt-20 w-full overflow-hidden border-y border-border/60 bg-surface/40 py-4">
+    <div className="my-10 w-full overflow-hidden border-y border-border/60 bg-surface/40 py-4">
       <div className="animate-marquee flex w-max gap-3">
         {loop.map((item, i) => (
           <span

@@ -33,7 +33,25 @@ export default function Nav() {
   }, [])
 
   return (
-    <nav className="fixed top-0 z-50 w-full border-b border-border/60 bg-bg/80 backdrop-blur-md">
+    <nav className="fixed bottom-0 z-50 w-full border-t border-border/60 bg-bg/80 backdrop-blur-md">
+      {menuOpen && (
+        <ul className="absolute bottom-full flex w-full flex-col gap-1 border-t border-border/60 bg-bg/95 px-6 py-4 text-sm backdrop-blur-md sm:hidden">
+          {links.map(({ id, label }) => (
+            <li key={id}>
+              <a
+                href={`#${id}`}
+                onClick={() => setMenuOpen(false)}
+                className={`block py-2 transition-colors hover:text-text-h ${
+                  active === id ? 'text-accent' : 'text-text-dim'
+                }`}
+              >
+                {label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      )}
+
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
         <a href="#hero" className="font-semibold text-text-h" onClick={() => setMenuOpen(false)}>
           NK<span className="text-accent">.</span>
@@ -63,24 +81,6 @@ export default function Nav() {
           {menuOpen ? <X size={22} /> : <Menu size={22} />}
         </button>
       </div>
-
-      {menuOpen && (
-        <ul className="flex flex-col gap-1 border-t border-border/60 px-6 py-4 text-sm sm:hidden">
-          {links.map(({ id, label }) => (
-            <li key={id}>
-              <a
-                href={`#${id}`}
-                onClick={() => setMenuOpen(false)}
-                className={`block py-2 transition-colors hover:text-text-h ${
-                  active === id ? 'text-accent' : 'text-text-dim'
-                }`}
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
-      )}
     </nav>
   )
 }
