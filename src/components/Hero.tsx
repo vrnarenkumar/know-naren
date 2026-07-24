@@ -1,4 +1,4 @@
-import { AnimatePresence, motion } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { Github, Linkedin, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { hero } from '../content'
@@ -10,15 +10,40 @@ const badges = [
   { label: 'AWS', className: 'bottom-2 left-2' },
 ]
 
-export default function Hero() {
-  const [roleIndex, setRoleIndex] = useState(0)
+function useTypewriter(words: string[]) {
+  const [text, setText] = useState('')
+  const [wordIndex, setWordIndex] = useState(0)
+  const [phase, setPhase] = useState<'typing' | 'pausing' | 'deleting'>('typing')
 
   useEffect(() => {
-    const id = setInterval(() => {
-      setRoleIndex((i) => (i + 1) % hero.roles.length)
-    }, 2200)
-    return () => clearInterval(id)
-  }, [])
+    const word = words[wordIndex]
+    let timeout: number
+
+    if (phase === 'typing') {
+      if (text.length < word.length) {
+        timeout = window.setTimeout(() => setText(word.slice(0, text.length + 1)), 65)
+      } else {
+        timeout = window.setTimeout(() => setPhase('pausing'), 1300)
+      }
+    } else if (phase === 'pausing') {
+      timeout = window.setTimeout(() => setPhase('deleting'), 500)
+    } else {
+      if (text.length > 0) {
+        timeout = window.setTimeout(() => setText(word.slice(0, text.length - 1)), 35)
+      } else {
+        setPhase('typing')
+        setWordIndex((i) => (i + 1) % words.length)
+      }
+    }
+
+    return () => window.clearTimeout(timeout)
+  }, [text, phase, wordIndex, words])
+
+  return text
+}
+
+export default function Hero() {
+  const role = useTypewriter(hero.roles)
 
   return (
     <section
@@ -46,19 +71,13 @@ export default function Hero() {
             {hero.name}
           </motion.h1>
 
-          <div className="mt-2 h-12 sm:h-16">
-            <AnimatePresence mode="wait">
-              <motion.p
-                key={roleIndex}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -16 }}
-                transition={{ duration: 0.4, ease: 'easeOut' }}
-                className="text-gradient text-3xl font-extrabold sm:text-5xl"
-              >
-                {hero.roles[roleIndex]}
-              </motion.p>
-            </AnimatePresence>
+          <div className="mt-2 h-7 sm:h-9">
+            <p className="text-gradient text-lg font-semibold sm:text-2xl">
+              {role}
+              <span className="ml-0.5 inline-block w-[2px] animate-pulse bg-accent-2 align-middle text-transparent">
+                |
+              </span>
+            </p>
           </div>
 
           <motion.p
