@@ -1,7 +1,7 @@
 export const hero = {
   name: 'Narenkumar V R',
   title: 'Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure',
-  roles: ['Generative AI', 'Agentic Systems', 'MLOps', 'AI Systems & Infrastructure'],
+  roles: ['Generative AI', 'Agentic Systems', 'Machine Learning Operations', 'AI Systems & Infrastructure', 'Cloud Architect'],
   eyebrow: 'Shipping AI Systems at Ford Motor Co.',
   summary:
     'Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scaling AI solutions end-to-end, from prototype to production.',
@@ -124,14 +124,35 @@ export type Project = {
   description: string
   tags: string[]
   link?: string
+  demo?: 'describe-ai' | 'notebook-agent'
+  color?: { base: string; light: string }
 }
 
 export const projects: Project[] = [
+  {
+    name: 'describe-ai',
+    description:
+      'Give it a public GitHub repo URL and it clones the repo, analyses the codebase with an LLM, and generates a full README.md — live, in your browser.',
+    tags: ['LangGraph', 'Groq (Llama 3.1)', 'PyGithub', 'FastAPI'],
+    link: 'https://github.com/vrnarenkumar/describe-ai',
+    demo: 'describe-ai',
+    color: { base: '#38bdf8', light: '#7dd3fc' },
+  },
+  {
+    name: 'notebook-agent',
+    description:
+      'Upload a PDF and ask it questions — chunked, embedded, and indexed on the fly, with answers grounded in your document via retrieval-augmented generation.',
+    tags: ['sentence-transformers', 'FAISS', 'Groq (Llama 3.1)', 'FastAPI'],
+    link: 'https://github.com/vrnarenkumar/notebook-agent',
+    demo: 'notebook-agent',
+    color: { base: '#a78bfa', light: '#c4b5fd' },
+  },
   {
     name: 'talk-to-your-data',
     description:
       'A full-stack, locally hosted "talk to your data" analytics chatbot that turns natural-language questions into read-only SQL and charts, with basic Q&A for users to interact with their data and a pluggable multi-data source connector layer for any type of DB.',
     tags: ['CrewAI', 'Ollama', 'FastAPI', 'React'],
+    color: { base: '#34d399', light: '#6ee7b7' },
     link: 'https://github.com/vrnarenkumar',
   },
 ]
