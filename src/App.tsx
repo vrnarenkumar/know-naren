@@ -7,6 +7,7 @@ import Experience from './components/Experience'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Education from './components/Education'
+import JobMatch from './components/JobMatch'
 import Footer from './components/Footer'
 import { hero } from './content'
 
@@ -35,6 +36,7 @@ function App() {
         <Projects />
         <Skills />
         <Education />
+        <JobMatch />
         <Footer />
       </div>
     </>
