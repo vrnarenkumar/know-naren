@@ -8,7 +8,7 @@ export default function Footer() {
   return (
     <footer
       id="contact"
-      className="relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col items-center justify-center overflow-hidden border-t border-border px-6 text-center"
+      className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col items-center justify-center overflow-hidden border-t border-border px-6 text-center"
     >
       <motion.div
         animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}

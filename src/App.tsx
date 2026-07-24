@@ -20,7 +20,7 @@ function App() {
 
         <section
           id="about"
-          className="relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col justify-center overflow-hidden"
+          className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always flex-col justify-center overflow-hidden"
         >
           <motion.div
             animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}

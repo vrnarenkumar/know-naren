@@ -14,7 +14,7 @@ export default function Section({ id, title, eyebrow, children, className = '' }
   return (
     <section
       id={id}
-      className="relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always items-center overflow-hidden"
+      className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always items-center overflow-hidden"
     >
       <motion.div
         animate={{ opacity: [0.3, 0.6, 0.3], scale: [1, 1.15, 1] }}
