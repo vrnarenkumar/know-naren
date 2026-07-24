@@ -1,5 +1,7 @@
 import Nav from './components/Nav'
 import Hero from './components/Hero'
+import Stats from './components/Stats'
+import TechMarquee from './components/TechMarquee'
 import Experience from './components/Experience'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
@@ -13,7 +15,9 @@ function App() {
     <>
       <Nav />
       <Hero />
-      <Section id="about" title="About">
+      <Stats />
+      <TechMarquee />
+      <Section id="about" title="About" eyebrow="Get to know me">
         <p className="max-w-3xl text-lg leading-relaxed text-text">{hero.summary}</p>
       </Section>
       <Experience />

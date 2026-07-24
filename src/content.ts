@@ -1,6 +1,8 @@
 export const hero = {
   name: 'Narenkumar V R',
   title: 'Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure',
+  roles: ['ML Engineer', 'MLOps Engineer', 'GenAI Builder', 'AI Systems Engineer'],
+  eyebrow: 'Shipping AI Systems at Ford Motor Co.',
   summary:
     'Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scaling AI solutions end-to-end, from prototype to production.',
   location: 'Chennai, India (open to relocate)',
@@ -8,6 +10,13 @@ export const hero = {
   linkedin: 'https://linkedin.com/in/vrnarenkumar',
   github: 'https://github.com/vrnarenkumar',
 }
+
+export const stats: { label: string; value: string }[] = [
+  { label: 'Years Experience', value: '5+' },
+  { label: 'Users Impacted', value: '10K+' },
+  { label: 'Faster Deployments', value: '70%' },
+  { label: 'Saved / Year', value: '$50K+' },
+]
 
 export type ExperienceProject = {
   name: string

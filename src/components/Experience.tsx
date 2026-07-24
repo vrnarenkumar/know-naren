@@ -19,7 +19,7 @@ export default function Experience() {
   const role = selected !== null ? experience[selected] : null
 
   return (
-    <Section id="experience" title="Experience">
+    <Section id="experience" title="My Journey" eyebrow="Career Path">
       <p className="mb-10 text-sm text-text-dim">Click a role to see the projects.</p>
 
       <div className="overflow-x-auto pb-4">
@@ -30,7 +30,7 @@ export default function Experience() {
             viewport={{ once: true, amount: 0.6 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
             style={{ transformOrigin: 'left' }}
-            className="absolute left-4 right-4 top-3 h-px bg-border"
+            className="absolute left-4 right-4 top-4 h-px bg-gradient-to-r from-accent via-accent-2 to-accent"
           />
 
           <div className="relative flex justify-between">
@@ -45,7 +45,10 @@ export default function Experience() {
                 transition={{ duration: 0.4, delay: i * 0.12, ease: 'easeOut' }}
                 className="group flex w-32 flex-col items-center gap-3 text-center"
               >
-                <span className="h-2.5 w-2.5 rounded-full bg-accent shadow-[0_0_10px_rgba(139,92,246,0.7)] ring-4 ring-bg transition-transform group-hover:scale-125" />
+                <span className="relative flex h-4 w-4 items-center justify-center">
+                  <span className="absolute h-4 w-4 animate-ping rounded-full bg-accent/50" />
+                  <span className="relative h-3 w-3 rounded-full bg-accent shadow-[0_0_12px_rgba(139,92,246,0.9)] ring-4 ring-bg transition-transform group-hover:scale-125" />
+                </span>
                 <span>
                   <span className="block text-sm font-semibold text-text-h">{r.title}</span>
                   <span className="mt-0.5 block text-xs text-accent">{r.company.split(' (')[0]}</span>
@@ -72,9 +75,10 @@ export default function Experience() {
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg rounded-xl border border-border bg-surface p-6"
+              className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-surface"
             >
-              <div className="flex items-start justify-between gap-4">
+              <div className="h-1.5 bg-gradient-to-r from-accent to-accent-2" />
+              <div className="flex items-start justify-between gap-4 p-6 pb-0">
                 <div>
                   <h3 className="text-xl font-semibold text-text-h">{role.title}</h3>
                   <p className="text-sm text-accent">
@@ -92,7 +96,7 @@ export default function Experience() {
                 </button>
               </div>
 
-              <ul className="mt-5 space-y-4">
+              <ul className="space-y-4 p-6 pt-5">
                 {role.projects.map((project) => (
                   <li key={project.name}>
                     <p className="text-sm font-semibold text-text-h">{project.name}</p>
