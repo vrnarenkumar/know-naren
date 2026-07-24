@@ -13,7 +13,7 @@ export default function Skills() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: i * 0.06, ease: 'easeOut' }}
-            className="gradient-border rounded-xl border border-border bg-surface p-5 transition-shadow hover:shadow-[0_0_24px_rgba(139,92,246,0.12)]"
+            className="gradient-border rounded-xl border border-border bg-surface p-5 transition-shadow hover:shadow-[0_0_24px_rgba(255,255,255,0.08)]"
           >
             <h3 className="mb-3 text-sm font-semibold text-accent">{group.category}</h3>
             <div className="flex flex-wrap gap-2">

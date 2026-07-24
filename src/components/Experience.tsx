@@ -47,7 +47,7 @@ export default function Experience() {
               >
                 <span className="relative flex h-4 w-4 items-center justify-center">
                   <span className="absolute h-4 w-4 animate-ping rounded-full bg-accent/50" />
-                  <span className="relative h-3 w-3 rounded-full bg-accent shadow-[0_0_12px_rgba(139,92,246,0.9)] ring-4 ring-bg transition-transform group-hover:scale-125" />
+                  <span className="relative h-3 w-3 rounded-full bg-accent shadow-[0_0_12px_rgba(255,255,255,0.7)] ring-4 ring-bg transition-transform group-hover:scale-125" />
                 </span>
                 <span>
                   <span className="block text-sm font-semibold text-text-h">{r.title}</span>

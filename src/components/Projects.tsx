@@ -18,7 +18,7 @@ export default function Projects() {
             viewport={{ once: true, amount: 0.3 }}
             transition={{ duration: 0.5, delay: i * 0.08, ease: 'easeOut' }}
             whileHover={{ y: -6 }}
-            className="gradient-border group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-[0_0_30px_rgba(139,92,246,0.15)]"
+            className="gradient-border group flex flex-col overflow-hidden rounded-xl border border-border bg-surface transition-shadow hover:shadow-[0_0_30px_rgba(255,255,255,0.1)]"
           >
             <div className="bg-glow flex h-32 items-center justify-center border-b border-border bg-surface-2">
               <Sparkles size={32} className="text-accent transition-transform group-hover:scale-110" />
