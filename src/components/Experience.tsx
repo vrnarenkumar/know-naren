@@ -75,10 +75,10 @@ export default function Experience() {
               exit={{ opacity: 0, scale: 0.95, y: 10 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
               onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg overflow-hidden rounded-xl border border-border bg-surface"
+              className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-xl border border-border bg-surface"
             >
-              <div className="h-1.5 bg-gradient-to-r from-accent to-accent-2" />
-              <div className="flex items-start justify-between gap-4 p-6 pb-0">
+              <div className="h-1.5 shrink-0 bg-gradient-to-r from-accent to-accent-2" />
+              <div className="flex shrink-0 items-start justify-between gap-4 p-6 pb-4">
                 <div>
                   <h3 className="text-xl font-semibold text-text-h">{role.title}</h3>
                   <p className="text-sm text-accent">
@@ -96,14 +96,23 @@ export default function Experience() {
                 </button>
               </div>
 
-              <ul className="space-y-4 p-6 pt-5">
-                {role.projects.map((project) => (
-                  <li key={project.name}>
-                    <p className="text-sm font-semibold text-text-h">{project.name}</p>
-                    <p className="mt-0.5 text-sm text-text-dim">{project.summary}</p>
-                  </li>
-                ))}
-              </ul>
+              <div className="overflow-y-auto px-6 pb-6">
+                <ul className="space-y-5">
+                  {role.projects.map((project) => (
+                    <li key={project.name}>
+                      <p className="mb-1.5 text-sm font-semibold text-text-h">{project.name}</p>
+                      <ul className="space-y-1.5">
+                        {project.bullets.map((bullet) => (
+                          <li key={bullet} className="flex gap-2 text-sm text-text-dim">
+                            <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-text-dim" />
+                            {bullet}
+                          </li>
+                        ))}
+                      </ul>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </motion.div>
           </motion.div>
         )}
