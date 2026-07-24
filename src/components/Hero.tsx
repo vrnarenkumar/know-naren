@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail, Phone } from 'lucide-react'
+import { Github, Linkedin, Mail } from 'lucide-react'
 import { hero } from '../content'
 import narenPhoto from '../assets/naren.jpg'
 
@@ -22,7 +22,7 @@ export default function Hero() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
-        className="text-4xl font-extrabold tracking-tight text-text-h sm:text-6xl"
+        className="text-4xl font-extrabold uppercase tracking-tight text-text-h sm:text-6xl"
       >
         {hero.name}
       </motion.h1>
@@ -72,12 +72,6 @@ export default function Hero() {
           className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text transition-colors hover:border-accent hover:text-text-h"
         >
           <Github size={16} /> GitHub
-        </a>
-        <a
-          href={`tel:${hero.phone}`}
-          className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-sm text-text transition-colors hover:border-accent hover:text-text-h"
-        >
-          <Phone size={16} /> {hero.phone}
         </a>
       </motion.div>
     </section>
