@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { Github, Linkedin, Mail } from 'lucide-react'
+import { Download, Github, Linkedin, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { hero } from '../content'
 import narenPhoto from '../assets/naren.jpg'
@@ -96,10 +96,17 @@ export default function Hero() {
             className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
           >
             <a
-              href={`mailto:${hero.email}`}
+              href={`${import.meta.env.BASE_URL}resume.pdf`}
+              download
               className="flex items-center gap-2 rounded-full bg-gradient-to-r from-accent to-accent-2 px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-105"
             >
-              <Mail size={16} /> Email Me
+              <Download size={16} /> Resume
+            </a>
+            <a
+              href={`mailto:${hero.email}`}
+              className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-text transition-colors hover:border-accent hover:text-text-h"
+            >
+              <Mail size={16} /> Email
             </a>
             <a
               href={hero.linkedin}
