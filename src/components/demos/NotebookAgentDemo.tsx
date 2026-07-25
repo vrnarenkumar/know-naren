@@ -2,9 +2,8 @@ import { FileText, Loader2, Upload } from 'lucide-react'
 import { useState } from 'react'
 import DemoModal from './DemoModal'
 import StepList, { type Step } from './StepList'
+import { API_URL } from '../../lib/api'
 import { streamNDJSON } from '../../lib/ndjson'
-
-const API_URL = import.meta.env.VITE_NOTEBOOK_AGENT_API_URL as string | undefined
 
 function mergeStep(prev: Step[], evt: Step): Step[] {
   const next = [...prev]
@@ -37,7 +36,7 @@ export default function NotebookAgentDemo({ onClose }: { onClose: () => void }) 
     try {
       const form = new FormData()
       form.append('file', file)
-      for await (const evt of streamNDJSON(`${API_URL}/upload`, { method: 'POST', body: form })) {
+      for await (const evt of streamNDJSON(`${API_URL}/notebook-agent/upload`, { method: 'POST', body: form })) {
         if (evt.type === 'error') {
           setError(evt.message as string)
         } else if (evt.type === 'result') {
@@ -68,7 +67,7 @@ export default function NotebookAgentDemo({ onClose }: { onClose: () => void }) 
     setError(null)
     setAsking(true)
     try {
-      for await (const evt of streamNDJSON(`${API_URL}/ask`, {
+      for await (const evt of streamNDJSON(`${API_URL}/notebook-agent/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ session_id: sessionId, question: question.trim() }),

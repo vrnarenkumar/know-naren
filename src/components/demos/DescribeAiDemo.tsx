@@ -2,9 +2,8 @@ import { Download, Loader2 } from 'lucide-react'
 import { useState } from 'react'
 import DemoModal from './DemoModal'
 import StepList, { type Step } from './StepList'
+import { API_URL } from '../../lib/api'
 import { streamNDJSON } from '../../lib/ndjson'
-
-const API_URL = import.meta.env.VITE_DESCRIBE_AI_API_URL as string | undefined
 
 type Result = { readme: string; owner: string | null; name: string | null }
 
@@ -30,7 +29,7 @@ export default function DescribeAiDemo({ onClose }: { onClose: () => void }) {
     setError(null)
     setRunning(true)
     try {
-      for await (const evt of streamNDJSON(`${API_URL}/analyze`, {
+      for await (const evt of streamNDJSON(`${API_URL}/describe-ai/analyze`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ repo_url: repoUrl.trim() }),
