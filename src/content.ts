@@ -1,3 +1,6 @@
+import resumeRaw from '../RESUME.md?raw'
+import { parseSkillsFromMarkdown } from './lib/parseSkills'
+
 export const hero = {
   name: 'Narenkumar V R',
   title: 'Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure',
@@ -157,50 +160,10 @@ export const projects: Project[] = [
   },
 ]
 
-export const skills: { category: string; items: string[] }[] = [
-  { category: 'Languages', items: ['Python', 'Node.js', 'React', 'SQL'] },
-  {
-    category: 'GenAI & Agents',
-    items: ['LangGraph', 'LangChain', 'RAG', 'MCP', 'CrewAI', 'n8n', 'Google ADK', 'Prompt Engineering'],
-  },
-  {
-    category: 'LLMOps & Evals',
-    items: ['RAGAS', 'LangSmith', 'Arize Phoenix', 'MLflow', 'W&B', 'Vertex AI Pipelines', 'Airflow'],
-  },
-  {
-    category: 'Backend',
-    items: ['FastAPI', 'WebSockets', 'Django', 'Microservices', 'Event-Driven Architecture'],
-  },
-  {
-    category: 'Data & Vector',
-    items: [
-      'PostgreSQL',
-      'BigQuery',
-      'Firestore',
-      'Spark',
-      'MongoDB',
-      'Redis',
-      'Kafka',
-      'Pub/Sub',
-      'Elasticsearch',
-      'ChromaDB',
-      'FAISS',
-      'MongoDB Atlas Vector Search',
-      'Pydantic',
-      'scikit-learn',
-      'SQLite',
-      'matplotlib',
-    ],
-  },
-  {
-    category: 'Cloud & DevOps',
-    items: ['AWS', 'Azure', 'GCP', 'Kubernetes', 'Helm', 'Terraform', 'Docker', 'GitHub Actions', 'OpenShift', 'HPC', 'CI/CD'],
-  },
-  {
-    category: 'ML/DL',
-    items: ['Hugging Face', 'PyTorch', 'TensorFlow', 'vLLM', 'TensorRT', 'Databricks', 'SageMaker', 'Vertex AI'],
-  },
-]
+// Sourced live from RESUME.md's "## Skills" section — add a new "### Category"
+// heading or extend an existing category's comma-separated line there and it
+// shows up here automatically, no code changes needed.
+export const skills: { category: string; items: string[] }[] = parseSkillsFromMarkdown(resumeRaw)
 
 export const education = {
   degree: 'B.E., Computer Science and Engineering',
