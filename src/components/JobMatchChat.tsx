@@ -4,13 +4,17 @@ import { useEffect, useRef, useState } from 'react'
 import StepList, { type Step } from './demos/StepList'
 import { API_URL } from '../lib/api'
 import { streamNDJSON } from '../lib/ndjson'
-import { renderAnalysis } from '../lib/renderMarkdown'
+import { colorForProject } from '../lib/projectColor'
+
+type MatchProject = { name: string; match_reason: string; keywords: string[] }
 
 type Turn = {
   id: string
   userLabel: string
   steps: Step[]
-  analysis: string | null
+  summary: string | null
+  projects: MatchProject[] | null
+  closing: string | null
   error: string | null
   running: boolean
 }
@@ -27,6 +31,34 @@ function updateTurn(turns: Turn[], id: string, patch: Partial<Turn>): Turn[] {
   return turns.map((t) => (t.id === id ? { ...t, ...patch } : t))
 }
 
+function MatchProjectCard({ project }: { project: MatchProject }) {
+  const color = colorForProject(project.name)
+  return (
+    <div
+      className="rounded-lg border p-3"
+      style={{ borderColor: `${color.base}4D`, backgroundColor: `${color.base}0D` }}
+    >
+      <p className="text-sm font-semibold" style={{ color: color.base }}>
+        {project.name}
+      </p>
+      <p className="mt-1 text-sm text-text">{project.match_reason}</p>
+      {project.keywords.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {project.keywords.map((kw) => (
+            <span
+              key={kw}
+              className="rounded-full border px-2 py-0.5 text-[11px]"
+              style={{ borderColor: `${color.base}4D`, backgroundColor: `${color.base}1A`, color: color.base }}
+            >
+              {kw}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function JobMatchChat() {
   const [open, setOpen] = useState(false)
   const [jdText, setJdText] = useState('')
@@ -40,6 +72,7 @@ export default function JobMatchChat() {
 
   const anyRunning = turns.some((t) => t.running)
   const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
+  const expanded = turns.length > 0
 
   const send = async () => {
     if (!canSend) return
@@ -48,7 +81,10 @@ export default function JobMatchChat() {
     const thisFile = file
     const thisText = jdText.trim()
 
-    setTurns((prev) => [...prev, { id, userLabel, steps: [], analysis: null, error: null, running: true }])
+    setTurns((prev) => [
+      ...prev,
+      { id, userLabel, steps: [], summary: null, projects: null, closing: null, error: null, running: true },
+    ])
     setJdText('')
     setFile(null)
 
@@ -61,7 +97,14 @@ export default function JobMatchChat() {
         if (evt.type === 'error') {
           setTurns((prev) => updateTurn(prev, id, { error: evt.message as string, running: false }))
         } else if (evt.type === 'result') {
-          setTurns((prev) => updateTurn(prev, id, { analysis: evt.analysis as string, running: false }))
+          setTurns((prev) =>
+            updateTurn(prev, id, {
+              summary: (evt.summary as string) || null,
+              projects: (evt.projects as MatchProject[]) || [],
+              closing: (evt.closing as string) || null,
+              running: false,
+            }),
+          )
         } else {
           const step = evt as unknown as Step
           setTurns((prev) =>
@@ -94,13 +137,17 @@ export default function JobMatchChat() {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
             transition={{ duration: 0.2, ease: 'easeOut' }}
-            className="flex h-[32rem] max-h-[70vh] w-[min(24rem,calc(100vw-3rem))] flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl"
+            className={`flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl transition-[width,height] duration-300 ease-out ${
+              expanded
+                ? 'h-[42rem] max-h-[85vh] w-[min(30rem,calc(100vw-3rem))]'
+                : 'h-[28rem] max-h-[70vh] w-[min(24rem,calc(100vw-3rem))]'
+            }`}
           >
             <div className="h-1.5 shrink-0 bg-gradient-to-r from-accent to-accent-2" />
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div>
-                <p className="text-sm font-semibold text-text-h">JD Match</p>
-                <p className="text-xs text-text-dim">Ask if a role fits Naren</p>
+                <p className="text-sm font-semibold text-text-h">Ask about me</p>
+                <p className="text-xs text-text-dim">Paste your JD and see if I would be a right fit for your JD.</p>
               </div>
               <button
                 type="button"
@@ -118,7 +165,7 @@ export default function JobMatchChat() {
                   <Sparkles size={14} />
                 </div>
                 <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2 text-sm text-text">
-                  Hi! Paste a job description or attach a PDF and I'll show you why Naren's a great fit.
+                  Hi, I'm Naren. Paste a job description or attach a PDF and I'll show you why I'd be a great fit.
                 </div>
               </div>
 
@@ -134,10 +181,22 @@ export default function JobMatchChat() {
                     <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
                       <Sparkles size={14} />
                     </div>
-                    <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
+                    <div className="max-w-[90%] flex-1 rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
                       {turn.steps.length > 0 && <StepList steps={turn.steps} />}
                       {turn.error && <p className="text-red-300">{turn.error}</p>}
-                      {turn.analysis && <div className="-mt-1">{renderAnalysis(turn.analysis)}</div>}
+                      {turn.summary && (
+                        <div className="space-y-3">
+                          <p className="text-text">{turn.summary}</p>
+                          {turn.projects && turn.projects.length > 0 && (
+                            <div className="space-y-2">
+                              {turn.projects.map((p) => (
+                                <MatchProjectCard key={p.name} project={p} />
+                              ))}
+                            </div>
+                          )}
+                          {turn.closing && <p className="text-text">{turn.closing}</p>}
+                        </div>
+                      )}
                       {turn.running && turn.steps.length === 0 && (
                         <p className="text-xs text-text-dim">Waking up the demo server…</p>
                       )}
