@@ -15,6 +15,7 @@ type Turn = {
   summary: string | null
   projects: MatchProject[] | null
   closing: string | null
+  answer: string | null
   error: string | null
   running: boolean
 }
@@ -72,7 +73,7 @@ export default function JobMatchChat() {
 
   const anyRunning = turns.some((t) => t.running)
   const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
-  const expanded = turns.some((t) => t.summary || (t.projects && t.projects.length > 0))
+  const expanded = turns.some((t) => t.summary || (t.projects && t.projects.length > 0) || (t.answer && t.answer.length > 160))
 
   const send = async () => {
     if (!canSend) return
@@ -83,7 +84,7 @@ export default function JobMatchChat() {
 
     setTurns((prev) => [
       ...prev,
-      { id, userLabel, steps: [], summary: null, projects: null, closing: null, error: null, running: true },
+      { id, userLabel, steps: [], summary: null, projects: null, closing: null, answer: null, error: null, running: true },
     ])
     setJdText('')
     setFile(null)
@@ -100,8 +101,9 @@ export default function JobMatchChat() {
           setTurns((prev) =>
             updateTurn(prev, id, {
               summary: (evt.summary as string) || null,
-              projects: (evt.projects as MatchProject[]) || [],
+              projects: (evt.projects as MatchProject[]) || null,
               closing: (evt.closing as string) || null,
+              answer: (evt.answer as string) || null,
               running: false,
             }),
           )
@@ -147,7 +149,7 @@ export default function JobMatchChat() {
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
               <div>
                 <p className="text-sm font-semibold text-text-h">Ask about me</p>
-                <p className="text-xs text-text-dim">Paste your JD and see if I would be a right fit for your JD.</p>
+                <p className="text-xs text-text-dim">Paste a JD, or ask if I have experience with something.</p>
               </div>
               <button
                 type="button"
@@ -165,7 +167,8 @@ export default function JobMatchChat() {
                   <Sparkles size={14} />
                 </div>
                 <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2 text-sm text-text">
-                  Hi, I'm Naren. Paste a job description or attach a PDF and I'll show you why I'd be a great fit.
+                  Hi, I'm Naren. Paste a job description and I'll show you why I'd be a great fit — or just ask me
+                  something, like "do you have experience with ADK?"
                 </div>
               </div>
 
@@ -184,6 +187,7 @@ export default function JobMatchChat() {
                     <div className="max-w-[90%] flex-1 rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
                       {turn.steps.length > 0 && <StepList steps={turn.steps} />}
                       {turn.error && <p className="text-red-300">{turn.error}</p>}
+                      {turn.answer && <p className="text-text">{turn.answer}</p>}
                       {turn.summary && (
                         <div className="space-y-3">
                           <p className="text-text">{turn.summary}</p>
@@ -239,7 +243,7 @@ export default function JobMatchChat() {
                       send()
                     }
                   }}
-                  placeholder="Paste a job description…"
+                  placeholder="Paste a JD or ask a question…"
                   rows={1}
                   className="max-h-24 flex-1 resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-text-dim focus:border-accent focus:outline-none"
                 />
