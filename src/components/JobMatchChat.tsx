@@ -4,9 +4,10 @@ import { useEffect, useRef, useState } from 'react'
 import StepList, { type Step } from './demos/StepList'
 import { API_URL } from '../lib/api'
 import { streamNDJSON } from '../lib/ndjson'
-import { colorForProject } from '../lib/projectColor'
-
-type MatchProject = { name: string; match_reason: string; keywords: string[] }
+import ExperiencePane from './ExperiencePane'
+import MatchProjectCard, { type MatchProject } from './MatchProjectCard'
+import { detectExperienceRoles } from '../lib/matchExperience'
+import { highlightMatches } from '../lib/highlight'
 
 type Turn = {
   id: string
@@ -16,6 +17,7 @@ type Turn = {
   projects: MatchProject[] | null
   closing: string | null
   answer: string | null
+  redirect: string | null
   error: string | null
   running: boolean
 }
@@ -32,37 +34,10 @@ function updateTurn(turns: Turn[], id: string, patch: Partial<Turn>): Turn[] {
   return turns.map((t) => (t.id === id ? { ...t, ...patch } : t))
 }
 
-function MatchProjectCard({ project }: { project: MatchProject }) {
-  const color = colorForProject(project.name)
-  return (
-    <div
-      className="rounded-lg border p-3"
-      style={{ borderColor: `${color.base}4D`, backgroundColor: `${color.base}0D` }}
-    >
-      <p className="text-sm font-semibold" style={{ color: color.base }}>
-        {project.name}
-      </p>
-      <p className="mt-1 text-sm text-text">{project.match_reason}</p>
-      {project.keywords.length > 0 && (
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {project.keywords.map((kw) => (
-            <span
-              key={kw}
-              className="rounded-full border px-2 py-0.5 text-[11px]"
-              style={{ borderColor: `${color.base}4D`, backgroundColor: `${color.base}1A`, color: color.base }}
-            >
-              {kw}
-            </span>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function JobMatchChat() {
   const [open, setOpen] = useState(false)
-  const [manualExpand, setManualExpand] = useState(true)
+  const [manualExpand, setManualExpand] = useState(false)
+  const [manualCollapsed, setManualCollapsed] = useState(false)
   const [jdText, setJdText] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [turns, setTurns] = useState<Turn[]>([])
@@ -71,6 +46,29 @@ export default function JobMatchChat() {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' })
   }, [turns, open])
+
+  const latestDone = [...turns].reverse().find((t) => !t.running && !t.error && !t.redirect) ?? null
+  const fullscreen = open && !!latestDone && !manualCollapsed
+  const matchedRoles = latestDone
+    ? detectExperienceRoles(
+        [latestDone.userLabel, latestDone.summary, latestDone.answer, latestDone.closing].filter(Boolean).join(' '),
+      )
+    : []
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      if (fullscreen) setManualCollapsed(true)
+      else if (open) setOpen(false)
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [fullscreen, open])
+
+  const closeWidget = () => {
+    setOpen(false)
+    setManualCollapsed(false)
+  }
 
   const anyRunning = turns.some((t) => t.running)
   const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
@@ -85,7 +83,7 @@ export default function JobMatchChat() {
 
     setTurns((prev) => [
       ...prev,
-      { id, userLabel, steps: [], summary: null, projects: null, closing: null, answer: null, error: null, running: true },
+      { id, userLabel, steps: [], summary: null, projects: null, closing: null, answer: null, redirect: null, error: null, running: true },
     ])
     setJdText('')
     setFile(null)
@@ -98,6 +96,8 @@ export default function JobMatchChat() {
       for await (const evt of streamNDJSON(`${API_URL}/jd-match/match`, { method: 'POST', body: form })) {
         if (evt.type === 'error') {
           setTurns((prev) => updateTurn(prev, id, { error: evt.message as string, running: false }))
+        } else if (evt.type === 'redirect') {
+          setTurns((prev) => updateTurn(prev, id, { redirect: evt.message as string, running: false }))
         } else if (evt.type === 'result') {
           setTurns((prev) =>
             updateTurn(prev, id, {
@@ -108,6 +108,7 @@ export default function JobMatchChat() {
               running: false,
             }),
           )
+          setManualCollapsed(false)
         } else {
           const step = evt as unknown as Step
           setTurns((prev) =>
@@ -131,20 +132,140 @@ export default function JobMatchChat() {
     }
   }
 
+  const conversation = (
+    <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
+      <div className="flex gap-2">
+        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
+          <Sparkles size={14} />
+        </div>
+        <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2 text-sm text-text">
+          Hi, I'm Naren. Paste a job description and I'll show you why I'd be a great fit — or just ask me
+          something, like "do you have experience with ADK?"
+        </div>
+      </div>
+
+      {turns.map((turn) => (
+        <div key={turn.id} className="space-y-3">
+          <div className="flex justify-end">
+            <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-gradient-to-r from-accent to-accent-2 px-3 py-2 text-sm text-black">
+              {turn.userLabel}
+            </div>
+          </div>
+
+          <div className="flex gap-2">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
+              <Sparkles size={14} />
+            </div>
+            <div className="max-w-[90%] flex-1 rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
+              {turn.steps.length > 0 && <StepList steps={turn.steps} />}
+              {turn.error && <p className="text-red-300">{turn.error}</p>}
+              {turn.redirect && <p className="text-text">{turn.redirect}</p>}
+              {turn.answer && <p className="text-text">{highlightMatches(turn.answer, turn.userLabel)}</p>}
+              {turn.summary && (
+                <div className="space-y-3">
+                  <p className="text-text">{highlightMatches(turn.summary, turn.userLabel)}</p>
+                  {turn.projects && turn.projects.length > 0 && (
+                    <div className="space-y-2">
+                      {turn.projects.map((p) => (
+                        <MatchProjectCard key={p.name} project={p} query={turn.userLabel} />
+                      ))}
+                    </div>
+                  )}
+                  {turn.closing && <p className="text-text">{highlightMatches(turn.closing, turn.userLabel)}</p>}
+                </div>
+              )}
+              {turn.running && turn.steps.length === 0 && (
+                <span className="flex items-center gap-1 py-0.5">
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.3s]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.15s]" />
+                  <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim" />
+                </span>
+              )}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+
+  const composer = (
+    <div className="shrink-0 border-t border-border p-3">
+      {file && (
+        <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 text-xs text-text-dim">
+          <FileText size={14} className="text-accent" />
+          {file.name}
+          <button type="button" onClick={() => setFile(null)} className="ml-auto hover:text-text-h">
+            <X size={12} />
+          </button>
+        </div>
+      )}
+      <div className="flex items-end gap-2">
+        <label className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface-2 text-text-dim transition-colors hover:border-accent hover:text-text-h">
+          <Paperclip size={16} />
+          <input
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+          />
+        </label>
+        <textarea
+          value={jdText}
+          onChange={(e) => setJdText(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' && !e.shiftKey) {
+              e.preventDefault()
+              send()
+            }
+          }}
+          placeholder="Paste a JD or ask a question…"
+          rows={1}
+          className="max-h-24 flex-1 resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-text-dim focus:border-accent focus:outline-none"
+        />
+        <button
+          type="button"
+          onClick={send}
+          disabled={!canSend}
+          aria-label="Send"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-accent to-accent-2 text-black transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
+        >
+          <Send size={16} />
+        </button>
+      </div>
+      {!API_URL && <p className="mt-2 text-[11px] text-text-dim">Demo server isn't configured yet.</p>}
+      <p className="mt-2 text-[11px] text-text-dim">
+        Chat responses may be wrong or out of date — please consider my{' '}
+        <a href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer" className="underline hover:text-text-h">
+          resume
+        </a>{' '}
+        or contact me at{' '}
+        <a href="mailto:vrnarenkumar@gmail.com" className="underline hover:text-text-h">
+          vrnarenkumar@gmail.com
+        </a>
+        .
+      </p>
+    </div>
+  )
+
   return (
-    <div className="fixed bottom-24 right-6 z-40 flex flex-col items-end gap-3">
+    <div className={`fixed bottom-24 right-6 flex flex-col items-end gap-3 ${fullscreen ? 'z-[70]' : 'z-40'}`}>
       <AnimatePresence>
         {open && (
           <motion.div
+            layout
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            transition={{ duration: 0.2, ease: 'easeOut' }}
-            className={`flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl transition-[width,height] duration-300 ease-out ${
-              expanded
-                ? 'h-[42rem] max-h-[85vh] w-[min(30rem,calc(100vw-3rem))]'
-                : 'h-[28rem] max-h-[70vh] w-[min(24rem,calc(100vw-3rem))]'
-            }`}
+            transition={{ duration: 0.35, ease: 'easeOut', layout: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }}
+            className={
+              fullscreen
+                ? 'fixed inset-0 z-[70] flex flex-col overflow-hidden border border-border bg-surface shadow-2xl'
+                : `flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl transition-[width,height] duration-300 ease-out ${
+                    expanded
+                      ? 'h-[42rem] max-h-[min(85vh,calc(100vh_-_10.5rem))] w-[min(30rem,calc(100vw-3rem))]'
+                      : 'h-[28rem] max-h-[min(70vh,calc(100vh_-_10.5rem))] w-[min(24rem,calc(100vw-3rem))]'
+                  }`
+            }
           >
             <div className="h-1.5 shrink-0 bg-gradient-to-r from-accent to-accent-2" />
             <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
@@ -153,18 +274,29 @@ export default function JobMatchChat() {
                 <p className="text-xs text-text-dim">Paste a JD, or ask if I have experience with something.</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                <button
-                  type="button"
-                  aria-label={expanded ? 'Shrink chat' : 'Expand chat'}
-                  onClick={() => setManualExpand((v) => !v)}
-                  className="text-text-dim transition-colors hover:text-text-h"
-                >
-                  {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
-                </button>
+                {fullscreen ? (
+                  <button
+                    type="button"
+                    aria-label="Collapse to widget"
+                    onClick={() => setManualCollapsed(true)}
+                    className="text-text-dim transition-colors hover:text-text-h"
+                  >
+                    <Minimize2 size={16} />
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    aria-label={expanded ? 'Shrink chat' : 'Expand chat'}
+                    onClick={() => setManualExpand((v) => !v)}
+                    className="text-text-dim transition-colors hover:text-text-h"
+                  >
+                    {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                  </button>
+                )}
                 <button
                   type="button"
                   aria-label="Close"
-                  onClick={() => setOpen(false)}
+                  onClick={closeWidget}
                   className="text-text-dim transition-colors hover:text-text-h"
                 >
                   <X size={18} />
@@ -172,118 +304,38 @@ export default function JobMatchChat() {
               </div>
             </div>
 
-            <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
-              <div className="flex gap-2">
-                <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
-                  <Sparkles size={14} />
-                </div>
-                <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2 text-sm text-text">
-                  Hi, I'm Naren. Paste a job description and I'll show you why I'd be a great fit — or just ask me
-                  something, like "do you have experience with ADK?"
+            {fullscreen ? (
+              <div className="flex min-h-0 flex-1 overflow-hidden">
+                <aside className="hidden w-[340px] shrink-0 overflow-y-auto border-r border-border/60 md:block">
+                  <ExperiencePane turn={latestDone} matchedRoles={matchedRoles} query={latestDone?.userLabel ?? ''} />
+                </aside>
+                <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
+                  {conversation}
+                  {composer}
                 </div>
               </div>
-
-              {turns.map((turn) => (
-                <div key={turn.id} className="space-y-3">
-                  <div className="flex justify-end">
-                    <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-gradient-to-r from-accent to-accent-2 px-3 py-2 text-sm text-black">
-                      {turn.userLabel}
-                    </div>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
-                      <Sparkles size={14} />
-                    </div>
-                    <div className="max-w-[90%] flex-1 rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
-                      {turn.steps.length > 0 && <StepList steps={turn.steps} />}
-                      {turn.error && <p className="text-red-300">{turn.error}</p>}
-                      {turn.answer && <p className="text-text">{turn.answer}</p>}
-                      {turn.summary && (
-                        <div className="space-y-3">
-                          <p className="text-text">{turn.summary}</p>
-                          {turn.projects && turn.projects.length > 0 && (
-                            <div className="space-y-2">
-                              {turn.projects.map((p) => (
-                                <MatchProjectCard key={p.name} project={p} />
-                              ))}
-                            </div>
-                          )}
-                          {turn.closing && <p className="text-text">{turn.closing}</p>}
-                        </div>
-                      )}
-                      {turn.running && turn.steps.length === 0 && (
-                        <span className="flex items-center gap-1 py-0.5">
-                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.3s]" />
-                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.15s]" />
-                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim" />
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="shrink-0 border-t border-border p-3">
-              {file && (
-                <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 text-xs text-text-dim">
-                  <FileText size={14} className="text-accent" />
-                  {file.name}
-                  <button type="button" onClick={() => setFile(null)} className="ml-auto hover:text-text-h">
-                    <X size={12} />
-                  </button>
-                </div>
-              )}
-              <div className="flex items-end gap-2">
-                <label className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface-2 text-text-dim transition-colors hover:border-accent hover:text-text-h">
-                  <Paperclip size={16} />
-                  <input
-                    type="file"
-                    accept="application/pdf"
-                    className="hidden"
-                    onChange={(e) => setFile(e.target.files?.[0] ?? null)}
-                  />
-                </label>
-                <textarea
-                  value={jdText}
-                  onChange={(e) => setJdText(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault()
-                      send()
-                    }
-                  }}
-                  placeholder="Paste a JD or ask a question…"
-                  rows={1}
-                  className="max-h-24 flex-1 resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-text-dim focus:border-accent focus:outline-none"
-                />
-                <button
-                  type="button"
-                  onClick={send}
-                  disabled={!canSend}
-                  aria-label="Send"
-                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-accent to-accent-2 text-black transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
-                >
-                  <Send size={16} />
-                </button>
-              </div>
-              {!API_URL && <p className="mt-2 text-[11px] text-text-dim">Demo server isn't configured yet.</p>}
-            </div>
+            ) : (
+              <>
+                {conversation}
+                {composer}
+              </>
+            )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <motion.button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close JD Match chat' : 'Open JD Match chat'}
-        whileHover={{ scale: 1.05 }}
-        className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent-2 text-black shadow-lg"
-      >
-        {!open && <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />}
-        {open ? <X size={22} /> : <MessageCircle size={22} className="relative" />}
-      </motion.button>
+      {!fullscreen && (
+        <motion.button
+          type="button"
+          onClick={() => (open ? closeWidget() : setOpen(true))}
+          aria-label={open ? 'Close JD Match chat' : 'Open JD Match chat'}
+          whileHover={{ scale: 1.05 }}
+          className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent-2 text-black shadow-lg"
+        >
+          {!open && <span className="absolute inset-0 animate-ping rounded-full bg-accent/40" />}
+          {open ? <X size={22} /> : <MessageCircle size={22} className="relative" />}
+        </motion.button>
+      )}
     </div>
   )
 }
