@@ -7,7 +7,6 @@ const links = [
   { id: 'projects', label: 'Projects' },
   { id: 'skills', label: 'Skills' },
   { id: 'education', label: 'Education' },
-  { id: 'jd-match', label: 'JD Match' },
   { id: 'contact', label: 'Contact' },
 ]
 

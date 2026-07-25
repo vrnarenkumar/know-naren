@@ -7,7 +7,7 @@ import Experience from './components/Experience'
 import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Education from './components/Education'
-import JobMatch from './components/JobMatch'
+import JobMatchChat from './components/JobMatchChat'
 import Footer from './components/Footer'
 import { hero } from './content'
 
@@ -15,6 +15,7 @@ function App() {
   return (
     <>
       <Nav />
+      <JobMatchChat />
       <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth">
         <Hero />
 
@@ -36,7 +37,6 @@ function App() {
         <Projects />
         <Skills />
         <Education />
-        <JobMatch />
         <Footer />
       </div>
     </>
