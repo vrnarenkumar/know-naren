@@ -7,7 +7,7 @@ import { streamNDJSON } from '../lib/ndjson'
 import ExperiencePane from './ExperiencePane'
 import MatchProjectCard, { type MatchProject } from './MatchProjectCard'
 import { detectExperienceRoles } from '../lib/matchExperience'
-import { highlightMatches } from '../lib/highlight'
+import { highlightMatches, renderRichText } from '../lib/highlight'
 
 type Turn = {
   id: string
@@ -48,12 +48,14 @@ export default function JobMatchChat() {
   }, [turns, open])
 
   const latestDone = [...turns].reverse().find((t) => !t.running && !t.error && !t.redirect) ?? null
-  const fullscreen = open && !!latestDone && !manualCollapsed
   const matchedRoles = latestDone
     ? detectExperienceRoles(
         [latestDone.userLabel, latestDone.summary, latestDone.answer, latestDone.closing].filter(Boolean).join(' '),
       )
     : []
+  const hasSidebarContent =
+    !!latestDone && (matchedRoles.length > 0 || (latestDone.projects && latestDone.projects.length > 0))
+  const fullscreen = open && hasSidebarContent && !manualCollapsed
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -160,7 +162,7 @@ export default function JobMatchChat() {
               {turn.steps.length > 0 && <StepList steps={turn.steps} />}
               {turn.error && <p className="text-red-300">{turn.error}</p>}
               {turn.redirect && <p className="text-text">{turn.redirect}</p>}
-              {turn.answer && <p className="text-text">{highlightMatches(turn.answer, turn.userLabel)}</p>}
+              {turn.answer && <p className="text-text">{renderRichText(turn.answer, turn.userLabel)}</p>}
               {turn.summary && (
                 <div className="space-y-3">
                   <p className="text-text">{highlightMatches(turn.summary, turn.userLabel)}</p>

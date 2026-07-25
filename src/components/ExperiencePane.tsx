@@ -1,6 +1,6 @@
 import { motion, type Variants } from 'framer-motion'
 import { colorForProject } from '../lib/projectColor'
-import { highlightMatches } from '../lib/highlight'
+import { highlightMatches, renderRichText } from '../lib/highlight'
 import type { MatchedExperience } from '../lib/matchExperience'
 import MatchProjectCard, { type MatchProject } from './MatchProjectCard'
 
@@ -105,7 +105,7 @@ export default function ExperiencePane({
       ) : (
         highlight && (
           <motion.p variants={item} className="text-lg leading-relaxed text-text">
-            {highlightMatches(highlight, query)}
+            {renderRichText(highlight, query)}
           </motion.p>
         )
       )}

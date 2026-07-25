@@ -41,3 +41,56 @@ export function highlightMatches(text: string | null | undefined, query: string 
     ),
   )
 }
+
+const LINK_PATTERN = /(https?:\/\/[^\s]+)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g
+const TRAILING_PUNCT = /[.,;:!?)\]}]+$/
+
+/** Like `highlightMatches`, but also turns URLs and email addresses into clickable links. */
+export function renderRichText(text: string | null | undefined, query: string | null | undefined): ReactNode {
+  if (!text) return text
+  const nodes: ReactNode[] = []
+  let lastIndex = 0
+  let key = 0
+  const pattern = new RegExp(LINK_PATTERN)
+  let match: RegExpExecArray | null
+  while ((match = pattern.exec(text))) {
+    const full = match[0]
+    const isUrl = !!match[1]
+    const start = match.index
+
+    if (start > lastIndex) {
+      nodes.push(<span key={key++}>{highlightMatches(text.slice(lastIndex, start), query)}</span>)
+    }
+
+    let display = full
+    let trailing = ''
+    if (isUrl) {
+      const trimMatch = display.match(TRAILING_PUNCT)
+      if (trimMatch) {
+        trailing = trimMatch[0]
+        display = display.slice(0, -trailing.length)
+      }
+    }
+
+    nodes.push(
+      <a
+        key={key++}
+        href={isUrl ? display : `mailto:${display}`}
+        target={isUrl ? '_blank' : undefined}
+        rel={isUrl ? 'noreferrer' : undefined}
+        className="text-accent underline decoration-accent/50 underline-offset-2 hover:text-accent-2"
+      >
+        {display}
+      </a>,
+    )
+    if (trailing) nodes.push(trailing)
+
+    lastIndex = start + full.length
+  }
+
+  if (lastIndex < text.length) {
+    nodes.push(<span key={key++}>{highlightMatches(text.slice(lastIndex), query)}</span>)
+  }
+
+  return nodes
+}
