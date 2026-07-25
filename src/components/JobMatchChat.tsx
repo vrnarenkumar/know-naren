@@ -72,7 +72,7 @@ export default function JobMatchChat() {
 
   const anyRunning = turns.some((t) => t.running)
   const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
-  const expanded = turns.length > 0
+  const expanded = turns.some((t) => t.summary || (t.projects && t.projects.length > 0))
 
   const send = async () => {
     if (!canSend) return
@@ -198,7 +198,11 @@ export default function JobMatchChat() {
                         </div>
                       )}
                       {turn.running && turn.steps.length === 0 && (
-                        <p className="text-xs text-text-dim">Waking up the demo server…</p>
+                        <span className="flex items-center gap-1 py-0.5">
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.3s]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim [animation-delay:-0.15s]" />
+                          <span className="h-1.5 w-1.5 animate-bounce rounded-full bg-text-dim" />
+                        </span>
                       )}
                     </div>
                   </div>
