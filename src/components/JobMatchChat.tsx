@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { FileText, MessageCircle, Paperclip, Send, Sparkles, X } from 'lucide-react'
+import { FileText, Maximize2, MessageCircle, Minimize2, Paperclip, Send, Sparkles, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import StepList, { type Step } from './demos/StepList'
 import { API_URL } from '../lib/api'
@@ -62,6 +62,7 @@ function MatchProjectCard({ project }: { project: MatchProject }) {
 
 export default function JobMatchChat() {
   const [open, setOpen] = useState(false)
+  const [manualExpand, setManualExpand] = useState(true)
   const [jdText, setJdText] = useState('')
   const [file, setFile] = useState<File | null>(null)
   const [turns, setTurns] = useState<Turn[]>([])
@@ -73,7 +74,7 @@ export default function JobMatchChat() {
 
   const anyRunning = turns.some((t) => t.running)
   const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
-  const expanded = turns.some((t) => t.summary || (t.projects && t.projects.length > 0) || (t.answer && t.answer.length > 160))
+  const expanded = manualExpand
 
   const send = async () => {
     if (!canSend) return
@@ -151,14 +152,24 @@ export default function JobMatchChat() {
                 <p className="text-sm font-semibold text-text-h">Ask about me</p>
                 <p className="text-xs text-text-dim">Paste a JD, or ask if I have experience with something.</p>
               </div>
-              <button
-                type="button"
-                aria-label="Close"
-                onClick={() => setOpen(false)}
-                className="text-text-dim transition-colors hover:text-text-h"
-              >
-                <X size={18} />
-              </button>
+              <div className="flex shrink-0 items-center gap-3">
+                <button
+                  type="button"
+                  aria-label={expanded ? 'Shrink chat' : 'Expand chat'}
+                  onClick={() => setManualExpand((v) => !v)}
+                  className="text-text-dim transition-colors hover:text-text-h"
+                >
+                  {expanded ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+                </button>
+                <button
+                  type="button"
+                  aria-label="Close"
+                  onClick={() => setOpen(false)}
+                  className="text-text-dim transition-colors hover:text-text-h"
+                >
+                  <X size={18} />
+                </button>
+              </div>
             </div>
 
             <div ref={scrollRef} className="flex-1 space-y-4 overflow-y-auto px-4 py-4">
