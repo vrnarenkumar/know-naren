@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import Nav from './components/Nav'
 import LandingPage from './components/LandingPage'
 import Stats from './components/Stats'
@@ -8,14 +9,38 @@ import Projects from './components/Projects'
 import Skills from './components/Skills'
 import Education from './components/Education'
 import JobMatchChat from './components/JobMatchChat'
+import AskAnythingTab from './components/AskAnythingTab'
 import Footer from './components/Footer'
 import { hero } from './content'
+import { API_URL } from './lib/api'
+
+// Fire-and-forget: lets Naren know someone's on the site. Once per browser
+// tab (sessionStorage), not once per section/interaction — see the "just a
+// visit ping, not a full activity feed" decision.
+function notifyVisit() {
+  if (!API_URL || sessionStorage.getItem('visit_notified')) return
+  sessionStorage.setItem('visit_notified', '1')
+  fetch(`${API_URL}/visit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      referrer: document.referrer || null,
+      user_agent: navigator.userAgent,
+      language: navigator.language,
+    }),
+  }).catch(() => {})
+}
 
 function App() {
+  useEffect(() => {
+    notifyVisit()
+  }, [])
+
   return (
     <>
       <Nav />
       <JobMatchChat />
+      <AskAnythingTab />
       <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth">
         <LandingPage />
 

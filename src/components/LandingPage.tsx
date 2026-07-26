@@ -1,8 +1,9 @@
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Download, Github, Home, Linkedin, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { hero } from '../content'
 import narenPhoto from '../assets/naren.jpg'
+import ResumeRequestModal from './ResumeRequestModal'
 
 function useTypewriter(words: string[]) {
   const [text, setText] = useState('')
@@ -38,6 +39,7 @@ function useTypewriter(words: string[]) {
 
 export default function LandingPage() {
   const role = useTypewriter(hero.roles)
+  const [resumeModalOpen, setResumeModalOpen] = useState(false)
 
   return (
     <section
@@ -101,13 +103,13 @@ export default function LandingPage() {
             transition={{ duration: 0.6, delay: 0.54, ease: 'easeOut' }}
             className="mt-8 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
           >
-            <a
-              href={`${import.meta.env.BASE_URL}resume.pdf`}
-              download
+            <button
+              type="button"
+              onClick={() => setResumeModalOpen(true)}
               className="flex items-center gap-2 rounded-full bg-gradient-to-r from-accent to-accent-2 px-5 py-2.5 text-sm font-semibold text-black transition-transform hover:scale-105"
             >
               <Download size={16} /> Resume
-            </a>
+            </button>
             <a
               href={`mailto:${hero.email}`}
               className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-text transition-colors hover:border-accent hover:text-text-h"
@@ -147,6 +149,10 @@ export default function LandingPage() {
           />
         </motion.div>
       </div>
+
+      <AnimatePresence>
+        {resumeModalOpen && <ResumeRequestModal onClose={() => setResumeModalOpen(false)} />}
+      </AnimatePresence>
     </section>
   )
 }
