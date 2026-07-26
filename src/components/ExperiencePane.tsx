@@ -86,7 +86,7 @@ export default function ExperiencePane({
                           {p.name}
                         </p>
                         <ul className="mt-1.5 list-disc space-y-1.5 pl-4 text-sm leading-relaxed text-text">
-                          {p.bullets.slice(0, 2).map((bullet, i) => (
+                          {p.bullets.slice(0, 3).map((bullet, i) => (
                             <li key={i}>{highlightMatches(bullet, query)}</li>
                           ))}
                         </ul>
