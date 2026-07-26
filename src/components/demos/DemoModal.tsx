@@ -6,7 +6,7 @@ type DemoModalProps = {
   title: string
   subtitle?: string
   repoUrl?: string
-  howItWorks?: string
+  howItWorks?: string[]
   accentColor?: { base: string; light: string }
   onClose: () => void
   children: ReactNode
@@ -69,12 +69,16 @@ export default function DemoModal({
               )}
             </div>
             {subtitle && <p className="mt-1 text-sm text-text-dim">{subtitle}</p>}
-            {howItWorks && (
+            {howItWorks && howItWorks.length > 0 && (
               <details className="mt-2">
                 <summary className="cursor-pointer text-xs text-text-dim hover:text-text-h">
                   How does this work?
                 </summary>
-                <p className="mt-2 max-w-xl text-xs leading-relaxed text-text-dim">{howItWorks}</p>
+                <ul className="mt-2 max-w-xl list-disc space-y-1 pl-4 text-xs leading-relaxed text-text-dim">
+                  {howItWorks.map((point, i) => (
+                    <li key={i}>{point}</li>
+                  ))}
+                </ul>
               </details>
             )}
           </div>

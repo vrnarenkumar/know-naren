@@ -72,7 +72,11 @@ export default function DescribeAiDemo({ onClose }: { onClose: () => void }) {
       subtitle="Analyze a public GitHub repo and generate its README — live."
       repoUrl="https://github.com/vrnarenkumar/describe-ai"
       accentColor={{ base: '#38bdf8', light: '#7dd3fc' }}
-      howItWorks="A LangGraph pipeline does the work in three steps: (1) it clones the repo locally and reads the source files, prioritizing code over config and docs; (2) it sends the file tree and source to Llama 3.1 (via Groq) to produce a structured analysis of the purpose, architecture, and tech stack; (3) it feeds that analysis back to the model to write a complete README.md, following a standard template. This public demo only runs the analyze + generate steps — it does not open pull requests."
+      howItWorks={[
+        'Clones the target repo locally and reads its source files, prioritizing code over config and docs.',
+        'Sends the file tree and source to Llama 3.1 (via Groq) to produce a structured analysis of the purpose, architecture, and tech stack.',
+        'Feeds that analysis back to the model to write a complete README.md, following a standard template.',
+      ]}
       onClose={onClose}
     >
       {!API_URL && (

@@ -1,13 +1,14 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { FileText, Maximize2, MessageCircle, Minimize2, Paperclip, Send, Sparkles, X } from 'lucide-react'
+import { Check, Maximize2, MessageCircle, Minimize2, Paperclip, Send, Sparkles, X } from 'lucide-react'
 import { useEffect, useRef, useState } from 'react'
 import StepList, { type Step } from './demos/StepList'
 import { API_URL } from '../lib/api'
 import { streamNDJSON } from '../lib/ndjson'
 import ExperiencePane from './ExperiencePane'
 import MatchProjectCard, { type MatchProject } from './MatchProjectCard'
-import { detectExperienceRoles } from '../lib/matchExperience'
+import { detectExperienceRoles, detectPersonalProjects } from '../lib/matchExperience'
 import { highlightMatches, renderRichText } from '../lib/highlight'
+import { hero } from '../content'
 
 type Turn = {
   id: string
@@ -16,6 +17,7 @@ type Turn = {
   summary: string | null
   projects: MatchProject[] | null
   closing: string | null
+  matchedSkills: string[] | null
   answer: string | null
   redirect: string | null
   error: string | null
@@ -25,9 +27,21 @@ type Turn = {
 function mergeStep(prev: Step[], evt: Step): Step[] {
   const next = [...prev]
   const idx = next.findIndex((s) => s.step === evt.step)
-  if (idx >= 0) next[idx] = evt
+  // Merge rather than replace: a "done"/"error" event that omits a field
+  // shouldn't wipe out what the earlier "running" event set.
+  if (idx >= 0) next[idx] = { ...next[idx], ...evt }
   else next.push(evt)
   return next
+}
+
+// What the assistant actually said in a completed turn, for conversation
+// history — without this, the backend classifies/answers every message with
+// zero memory, so short follow-ups like "spark?" get misread as noise.
+function turnAnswerText(turn: Turn): string {
+  if (turn.answer) return turn.answer
+  if (turn.summary || turn.closing) return [turn.summary, turn.closing].filter(Boolean).join(' ')
+  if (turn.redirect) return turn.redirect
+  return ''
 }
 
 function updateTurn(turns: Turn[], id: string, patch: Partial<Turn>): Turn[] {
@@ -39,7 +53,6 @@ export default function JobMatchChat() {
   const [manualExpand, setManualExpand] = useState(false)
   const [manualCollapsed, setManualCollapsed] = useState(false)
   const [jdText, setJdText] = useState('')
-  const [file, setFile] = useState<File | null>(null)
   const [turns, setTurns] = useState<Turn[]>([])
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -48,13 +61,16 @@ export default function JobMatchChat() {
   }, [turns, open])
 
   const latestDone = [...turns].reverse().find((t) => !t.running && !t.error && !t.redirect) ?? null
-  const matchedRoles = latestDone
-    ? detectExperienceRoles(
-        [latestDone.userLabel, latestDone.summary, latestDone.answer, latestDone.closing].filter(Boolean).join(' '),
-      )
-    : []
+  const latestDoneText = latestDone
+    ? [latestDone.userLabel, latestDone.summary, latestDone.answer, latestDone.closing].filter(Boolean).join(' ')
+    : ''
+  const matchedRoles = latestDone ? detectExperienceRoles(latestDoneText) : []
+  const matchedPersonalProjects = latestDone ? detectPersonalProjects(latestDoneText) : []
   const hasSidebarContent =
-    !!latestDone && (matchedRoles.length > 0 || (latestDone.projects && latestDone.projects.length > 0))
+    !!latestDone &&
+    (matchedRoles.length > 0 ||
+      matchedPersonalProjects.length > 0 ||
+      (latestDone.projects && latestDone.projects.length > 0))
   const fullscreen = open && hasSidebarContent && !manualCollapsed
 
   useEffect(() => {
@@ -73,27 +89,45 @@ export default function JobMatchChat() {
   }
 
   const anyRunning = turns.some((t) => t.running)
-  const canSend = (!!file || jdText.trim().length > 0) && !anyRunning && !!API_URL
+  const canSend = jdText.trim().length > 0 && !anyRunning && !!API_URL
   const expanded = manualExpand
 
-  const send = async () => {
-    if (!canSend) return
-    const id = crypto.randomUUID()
-    const userLabel = file ? `📄 ${file.name}` : jdText.trim()
-    const thisFile = file
+  const send = async (overrideFile?: File) => {
+    const thisFile = overrideFile
     const thisText = jdText.trim()
+    if ((!thisFile && !thisText) || anyRunning || !API_URL) return
+    const id = crypto.randomUUID()
+    const userLabel = thisFile ? `📄 ${thisFile.name}` : thisText
+    const history = turns
+      .filter((t) => !t.running && !t.error)
+      .flatMap((t) => {
+        const answer = turnAnswerText(t)
+        return answer ? [{ role: 'user', content: t.userLabel }, { role: 'assistant', content: answer }] : []
+      })
 
     setTurns((prev) => [
       ...prev,
-      { id, userLabel, steps: [], summary: null, projects: null, closing: null, answer: null, redirect: null, error: null, running: true },
+      {
+        id,
+        userLabel,
+        steps: [],
+        summary: null,
+        projects: null,
+        closing: null,
+        matchedSkills: null,
+        answer: null,
+        redirect: null,
+        error: null,
+        running: true,
+      },
     ])
     setJdText('')
-    setFile(null)
 
     try {
       const form = new FormData()
       if (thisText) form.append('jd_text', thisText)
       if (thisFile) form.append('jd_file', thisFile)
+      if (history.length > 0) form.append('history', JSON.stringify(history))
 
       for await (const evt of streamNDJSON(`${API_URL}/jd-match/match`, { method: 'POST', body: form })) {
         if (evt.type === 'error') {
@@ -106,6 +140,7 @@ export default function JobMatchChat() {
               summary: (evt.summary as string) || null,
               projects: (evt.projects as MatchProject[]) || null,
               closing: (evt.closing as string) || null,
+              matchedSkills: (evt.matched_skills as string[]) || null,
               answer: (evt.answer as string) || null,
               running: false,
             }),
@@ -174,6 +209,18 @@ export default function JobMatchChat() {
               {turn.summary && (
                 <div className="space-y-4 pt-4">
                   <p className="text-[15px] leading-7 tracking-[0.002em] text-text">{highlightMatches(turn.summary, turn.userLabel)}</p>
+                  {turn.matchedSkills && turn.matchedSkills.length > 0 && (
+                    <div className="flex flex-wrap gap-1.5">
+                      {turn.matchedSkills.map((skill) => (
+                        <span
+                          key={skill}
+                          className="inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-2 py-0.5 text-xs text-emerald-300"
+                        >
+                          <Check size={11} /> {skill}
+                        </span>
+                      ))}
+                    </div>
+                  )}
                   {turn.projects && turn.projects.length > 0 && (
                     <div className="space-y-2">
                       {turn.projects.map((p) => (
@@ -200,15 +247,6 @@ export default function JobMatchChat() {
 
   const composer = (
     <div className="shrink-0 border-t border-border bg-surface p-3">
-      {file && (
-        <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 text-xs text-text-dim">
-          <FileText size={14} className="text-accent" />
-          {file.name}
-          <button type="button" onClick={() => setFile(null)} className="ml-auto hover:text-text-h">
-            <X size={12} />
-          </button>
-        </div>
-      )}
       <div className="flex items-end gap-2">
         <label className="flex h-9 w-9 shrink-0 cursor-pointer items-center justify-center rounded-lg border border-border bg-surface-2 text-text-dim transition-colors hover:border-accent hover:text-text-h">
           <Paperclip size={16} />
@@ -216,7 +254,11 @@ export default function JobMatchChat() {
             type="file"
             accept="application/pdf"
             className="hidden"
-            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            onChange={(e) => {
+              const picked = e.target.files?.[0]
+              e.target.value = ''
+              if (picked) send(picked)
+            }}
           />
         </label>
         <textarea
@@ -234,7 +276,7 @@ export default function JobMatchChat() {
         />
         <button
           type="button"
-          onClick={send}
+          onClick={() => send()}
           disabled={!canSend}
           aria-label="Send"
           className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-r from-accent to-accent-2 text-black transition-opacity disabled:cursor-not-allowed disabled:opacity-40"
@@ -244,13 +286,19 @@ export default function JobMatchChat() {
       </div>
       {!API_URL && <p className="mt-2 text-[11px] text-text-dim">Demo server isn't configured yet.</p>}
       <p className="mt-2 text-[11px] leading-4 text-text-dim">
-        Chat responses may be wrong or out of date — please consider my{' '}
+        This runs on Groq's free-tier API, so it can occasionally run out of quota or
+        not quite match your wording — please double-check anything important against
+        my{' '}
         <a href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer" className="underline hover:text-text-h">
           resume
+        </a>
+        , or reach me on{' '}
+        <a href={hero.linkedin} target="_blank" rel="noreferrer" className="underline hover:text-text-h">
+          LinkedIn
         </a>{' '}
-        or contact me at{' '}
-        <a href="mailto:vrnarenkumar@gmail.com" className="underline hover:text-text-h">
-          vrnarenkumar@gmail.com
+        or at{' '}
+        <a href={`mailto:${hero.email}`} className="underline hover:text-text-h">
+          {hero.email}
         </a>
         .
       </p>
@@ -317,7 +365,12 @@ export default function JobMatchChat() {
             {fullscreen ? (
               <div className="flex min-h-0 flex-1 overflow-hidden">
                 <aside className="hidden w-[340px] shrink-0 overflow-y-auto border-r border-border/60 md:block">
-                  <ExperiencePane turn={latestDone} matchedRoles={matchedRoles} query={latestDone?.userLabel ?? ''} />
+                  <ExperiencePane
+                    turn={latestDone}
+                    matchedRoles={matchedRoles}
+                    matchedPersonalProjects={matchedPersonalProjects}
+                    query={latestDone?.userLabel ?? ''}
+                  />
                 </aside>
                 <div className="flex min-h-0 flex-1 flex-col overflow-hidden">
                   {conversation}

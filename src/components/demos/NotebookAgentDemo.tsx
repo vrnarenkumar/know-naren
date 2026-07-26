@@ -96,7 +96,13 @@ export default function NotebookAgentDemo({ onClose }: { onClose: () => void }) 
       subtitle="Upload a PDF and ask questions about it — live RAG."
       repoUrl="https://github.com/vrnarenkumar/notebook-agent"
       accentColor={{ base: '#a78bfa', light: '#c4b5fd' }}
-      howItWorks="Your PDF is parsed with PyMuPDF and split into overlapping chunks. Each chunk is embedded with a sentence-transformers model and stored in an in-memory FAISS index. When you ask a question, it's embedded the same way, matched against the most similar chunks in the index, and those chunks — plus your question — are sent to Llama 3.1 (via Groq) to generate an answer grounded only in your document. If the answer isn't in the retrieved chunks, it says so instead of guessing."
+      howItWorks={[
+        'Parses your PDF with PyMuPDF and splits it into overlapping chunks.',
+        'Embeds each chunk with a sentence-transformers model and stores them in an in-memory FAISS index.',
+        "Embeds your question the same way and matches it against the most similar chunks in the index.",
+        'Sends those chunks — plus your question — to Llama 3.1 (via Groq) to generate an answer grounded only in your document.',
+        "If the answer isn't in the retrieved chunks, it says so instead of guessing.",
+      ]}
       onClose={onClose}
     >
       {!API_URL && (

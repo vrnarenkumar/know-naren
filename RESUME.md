@@ -81,7 +81,7 @@ Upload a PDF and ask it questions — chunked, embedded (sentence-transformers),
 
 ### talk-to-your-data
 Ask questions about a database in plain English and get back SQL, a chart, and a summary — a staged NLU/NER/text-to-SQL/NLG pipeline (spaCy schema linking, sqlglot-validated read-only queries, Llama 3.1 via Groq) instead of a multi-agent framework.
-- Tags: spaCy, sqlglot, Groq (Llama 3.1), FastAPI, React
+- Tags: NLU, NER, NLG, spaCy, sqlglot, Groq (Llama 3.1), FastAPI, React
 - Link: https://github.com/vrnarenkumar/talk-to-your-data
 - Demo: talk-to-data
 - Color: #34d399, #6ee7b7
@@ -127,4 +127,4 @@ PostgreSQL, BigQuery, Firestore, Spark, MongoDB, Redis, Kafka, Pub/Sub, Elastics
 AWS, Azure, GCP, Kubernetes, Helm, Terraform, Docker, GitHub Actions, OpenShift, HPC, CI/CD
 
 ### ML/DL
-Hugging Face, PyTorch, TensorFlow, vLLM, TensorRT, Databricks, SageMaker, Vertex AI
+Deep Learning, Computer Vision, NLP, NLU, NLG, NER, Hugging Face, PyTorch, TensorFlow, vLLM, TensorRT, Databricks, SageMaker, Vertex AI

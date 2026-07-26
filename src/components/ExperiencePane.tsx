@@ -3,6 +3,7 @@ import { colorForProject } from '../lib/projectColor'
 import { highlightMatches, renderRichText } from '../lib/highlight'
 import type { MatchedExperience } from '../lib/matchExperience'
 import MatchProjectCard, { type MatchProject } from './MatchProjectCard'
+import type { Project } from '../content'
 
 export type ExperienceTurn = {
   id: string
@@ -25,10 +26,12 @@ const item: Variants = {
 export default function ExperiencePane({
   turn,
   matchedRoles,
+  matchedPersonalProjects,
   query,
 }: {
   turn: ExperienceTurn | null
   matchedRoles: MatchedExperience[]
+  matchedPersonalProjects: Project[]
   query: string
 }) {
   if (!turn) {
@@ -41,8 +44,9 @@ export default function ExperiencePane({
     )
   }
 
-  const projects = turn.projects ?? []
+  const backendProjects = turn.projects ?? []
   const highlight = turn.summary || turn.answer || turn.closing
+  const hasClientMatches = matchedRoles.length > 0 || matchedPersonalProjects.length > 0
 
   return (
     <motion.div
@@ -56,7 +60,7 @@ export default function ExperiencePane({
         Relevant experience
       </motion.p>
 
-      {matchedRoles.length > 0 ? (
+      {hasClientMatches ? (
         <div className="flex flex-col gap-8">
           {matchedRoles.map(({ role, projects: roleProjects }) => {
             const color = colorForProject(`${role.company}-${role.title}`)
@@ -93,10 +97,41 @@ export default function ExperiencePane({
               </motion.div>
             )
           })}
+
+          {matchedPersonalProjects.length > 0 && (
+            <motion.div variants={item} className="flex flex-col gap-4">
+              {matchedRoles.length > 0 && (
+                <p className="text-xs font-medium tracking-wide text-text-dim uppercase">Personal projects</p>
+              )}
+              {matchedPersonalProjects.map((proj) => {
+                const color = proj.color ?? colorForProject(proj.name)
+                return (
+                  <div key={proj.name} className="border-l-2 pl-4" style={{ borderColor: color.base }}>
+                    <p className="text-sm font-semibold" style={{ color: color.base }}>
+                      {proj.name}
+                    </p>
+                    <p className="mt-1 text-sm leading-relaxed text-text">
+                      {highlightMatches(proj.description, query)}
+                    </p>
+                    {proj.link && (
+                      <a
+                        href={proj.link}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="mt-1.5 inline-block text-xs text-text-dim underline hover:text-text-h"
+                      >
+                        View project
+                      </a>
+                    )}
+                  </div>
+                )
+              })}
+            </motion.div>
+          )}
         </div>
-      ) : projects.length > 0 ? (
+      ) : backendProjects.length > 0 ? (
         <div className="flex flex-col gap-6">
-          {projects.map((p) => (
+          {backendProjects.map((p) => (
             <motion.div key={p.name} variants={item} className="border-b border-border/60 pb-6 last:border-0 last:pb-0">
               <MatchProjectCard project={p} size="plain" query={query} />
             </motion.div>

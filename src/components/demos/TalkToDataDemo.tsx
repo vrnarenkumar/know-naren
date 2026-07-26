@@ -254,7 +254,14 @@ export default function TalkToDataDemo({ onClose }: { onClose: () => void }) {
       subtitle="Ask a database questions in plain English — live SQL, a chart, and a summary."
       repoUrl="https://github.com/vrnarenkumar/talk-to-your-data"
       accentColor={{ base: '#34d399', light: '#6ee7b7' }}
-      howItWorks="A staged NLP pipeline, not a multi-agent framework. NLU (rule-based) classifies the question's intent and links it to relevant tables/columns; NER (spaCy, seeded from the live schema) pulls out entities like dates and category values; the only LLM call in the whole pipeline turns that into one SQL SELECT (Llama 3.1 via Groq); sqlglot then parses and validates the SQL — rejecting anything that isn't a single read-only SELECT against known tables — before it ever runs; and finally a rule-based step picks a chart from the result shape and fills a template with the actual numbers for the summary. Use the bundled sample dataset or upload your own CSV."
+      howItWorks={[
+        "NLU (rule-based) classifies the question's intent and links it to relevant tables/columns.",
+        'NER (spaCy, seeded from the live schema) pulls out entities like dates and category values.',
+        'The only LLM call in the whole pipeline turns that into one SQL SELECT (Llama 3.1 via Groq).',
+        "sqlglot then parses and validates the SQL — rejecting anything that isn't a single read-only SELECT against known tables — before it ever runs.",
+        'A rule-based step picks a chart from the result shape and fills a template with the actual numbers for the summary.',
+        'Works against the bundled sample dataset or a CSV you upload.',
+      ]}
       onClose={onClose}
     >
       {!API_URL && (
