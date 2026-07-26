@@ -24,6 +24,7 @@ Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scalin
 - Enabled 2K+ deployments in under 25 minutes each.
 - Built an OpenTelemetry-based observability layer (Arize Phoenix) that traces every reasoning step, tool call, and response the agents make.
 - Built an agent-eval layer (Pydantic, Guardrails, LLM-as-a-judge) that gates deployments on a 91% task-success threshold.
+- Managed container images and versioning on the Red Hat Quay platform.
 
 **Smart Design Failure Mode and Effects Analysis Platform**
 - Partnered with DFMEA engineers to re-architect the legacy failure-mode-analysis platform around a Google ADK-based agent.
@@ -35,8 +36,8 @@ Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scalin
 - Routed requests across self-hosted SLMs (vLLM on HPC) and Gemini (Vertex AI) based on that difficulty prediction.
 - Cut compute spend by $50K+/year through this routing, with no loss in reasoning quality.
 
-**Skills Marketplace**
-- Built an agent-based Skills Marketplace platform (with Copilot and Claude) for Ford developers to publish and reuse agent skills for everyday automations (e.g., Jira task creation).
+**Smart Skills **
+- Built an agent-based Skills platform (with Copilot and Claude) for developers to publish and reuse agent skills for everyday automations (e.g., Jira task creation).
 - Scaled the marketplace to 1K+ reusable skills, with 300+ used daily across the organization.
 - Made the marketplace compatible with GitHub Copilot, Claude Code, and OpenAI Codex.
 - Built a duplicate-API detection pipeline for the API Catalog using lexical filtering plus ANN cosine-similarity over schema embeddings.
@@ -60,10 +61,13 @@ Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scalin
 - Integrated the platform with Voxel51, W&B, Dataloop, CVAT, and Vertex AI for data curation and training workflows.
 - Developed FFmpeg codec pipelines transcoding developer fleet recordings to optimized MP4 (H.264/HEVC).
 - Enabled large-scale training-data processing across Ford's autonomous/ADAS programs with these pipelines.
+- Deployed services such as CVAT, Voxel51 and Weights & Biases on HPC infrastructure, configuring Kubernetes deployments with virtual services, volumes, and storage via Helm and manual deployment.
+- Managed CI/CD pipelines and triggers with Tekton, deployed on OpenShift.
 
 ### Software Developer — Eunimart, Hyderabad — June 2021 – July 2022
 
-**SKU Content Automation**
+**SKU Listing Automation**
+- Deployed NLP services — Description Generation, Keyword Generation, Similar Product Finder, and Image Recognition — as microservices with nginx, managing them on Azure VMs.
 - Trained deep-learning models (PyTorch) on Amazon SageMaker for BLIP image captioning and Faster R-CNN object detection.
 - Used those models to auto-generate product descriptions and keywords across 500+ SKUs, cutting manual content-creation effort by 50%.
 - Packaged the trained models to Amazon ECR and served them via SageMaker endpoints.
