@@ -1,3 +1,4 @@
+import { ExternalLink, Github, Linkedin, Mail } from 'lucide-react'
 import type { ReactNode } from 'react'
 
 const STOPWORDS = new Set([
@@ -45,7 +46,19 @@ export function highlightMatches(text: string | null | undefined, query: string 
 const LINK_PATTERN = /(https?:\/\/[^\s]+)|([a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,})/g
 const TRAILING_PUNCT = /[.,;:!?)\]}]+$/
 
-/** Like `highlightMatches`, but also turns URLs and email addresses into clickable links. */
+function linkChipMeta(url: string, isEmail: boolean): { Icon: typeof Mail; label: string } {
+  if (isEmail) return { Icon: Mail, label: 'Email' }
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '')
+    if (host.includes('linkedin.com')) return { Icon: Linkedin, label: 'LinkedIn' }
+    if (host.includes('github.com')) return { Icon: Github, label: 'GitHub' }
+    return { Icon: ExternalLink, label: host }
+  } catch {
+    return { Icon: ExternalLink, label: url }
+  }
+}
+
+/** Like `highlightMatches`, but also turns URLs and email addresses into small icon+label link chips. */
 export function renderRichText(text: string | null | undefined, query: string | null | undefined): ReactNode {
   if (!text) return text
   const nodes: ReactNode[] = []
@@ -72,15 +85,20 @@ export function renderRichText(text: string | null | undefined, query: string | 
       }
     }
 
+    const href = isUrl ? display : `mailto:${display}`
+    const { Icon, label } = linkChipMeta(display, !isUrl)
+
     nodes.push(
       <a
         key={key++}
-        href={isUrl ? display : `mailto:${display}`}
+        href={href}
         target={isUrl ? '_blank' : undefined}
         rel={isUrl ? 'noreferrer' : undefined}
-        className="text-accent underline decoration-accent/50 underline-offset-2 hover:text-accent-2"
+        title={display}
+        className="mx-0.5 inline-flex items-center gap-1 rounded-full border border-accent/30 bg-accent/10 px-2.5 py-0.5 align-middle text-xs font-medium text-accent transition-colors hover:bg-accent/20"
       >
-        {display}
+        <Icon size={12} />
+        {label}
       </a>,
     )
     if (trailing) nodes.push(trailing)

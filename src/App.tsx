@@ -1,5 +1,5 @@
 import Nav from './components/Nav'
-import Hero from './components/Hero'
+import LandingPage from './components/LandingPage'
 import Stats from './components/Stats'
 import TechMarquee from './components/TechMarquee'
 import SectionHeading from './components/SectionHeading'
@@ -17,7 +17,7 @@ function App() {
       <Nav />
       <JobMatchChat />
       <div className="h-screen snap-y snap-mandatory overflow-y-scroll scroll-smooth">
-        <Hero />
+        <LandingPage />
 
         <section
           id="about"
@@ -28,7 +28,7 @@ function App() {
             <TechMarquee />
             <div className="mx-auto w-full max-w-5xl px-6">
               <SectionHeading title="About" eyebrow="Get to know me" />
-              <p className="max-w-3xl text-lg leading-relaxed text-text">{hero.summary}</p>
+              <p className="max-w-3xl text-lg leading-relaxed text-text">{hero.about}</p>
             </div>
           </div>
         </section>

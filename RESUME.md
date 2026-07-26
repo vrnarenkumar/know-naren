@@ -53,15 +53,60 @@ Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scalin
 
 ## Personal Projects
 
-- **describe-ai** — Give it a public GitHub repo URL and it clones the repo, analyses the codebase with an LLM (Llama 3.1 via Groq), and generates a full README.md — live, via a LangGraph pipeline. https://github.com/vrnarenkumar/describe-ai
-- **notebook-agent** — Upload a PDF and ask it questions — chunked, embedded (sentence-transformers), and indexed (FAISS) on the fly, with answers grounded in the document via retrieval-augmented generation and Llama 3.1 via Groq. https://github.com/vrnarenkumar/notebook-agent
-- **talk-to-your-data** — A full-stack, locally hosted "talk to your data" analytics chatbot (CrewAI, Ollama, FastAPI, React) that turns natural-language questions into read-only SQL and charts, with a pluggable multi-data-source connector layer.
+<!-- PORTFOLIO PROJECTS
+Add a project by copying this block. It automatically appears on the site.
+
+### Project name
+One concise sentence describing the project and its outcome.
+- Tags: Tool one, Tool two, Tool three
+- Link: https://github.com/your-account/project
+- Demo: describe-ai                  # optional; only for an existing live demo
+- Color: #38bdf8, #7dd3fc           # optional; base and highlight colours
+- Images: shot-one.png, shot-two.png # optional; files in /public/projects/<Project name>/
+-->
+
+### describe-ai
+Give it a public GitHub repo URL and it clones the repo, analyses the codebase with an LLM (Llama 3.1 via Groq), and generates a full README.md — live, via a LangGraph pipeline.
+- Tags: LangGraph, Groq (Llama 3.1), PyGithub, FastAPI
+- Link: https://github.com/vrnarenkumar/describe-ai
+- Demo: describe-ai
+- Color: #38bdf8, #7dd3fc
+
+### notebook-agent
+Upload a PDF and ask it questions — chunked, embedded (sentence-transformers), and indexed (FAISS) on the fly, with answers grounded in the document via retrieval-augmented generation and Llama 3.1 via Groq.
+- Tags: sentence-transformers, FAISS, Groq (Llama 3.1), FastAPI
+- Link: https://github.com/vrnarenkumar/notebook-agent
+- Demo: notebook-agent
+- Color: #a78bfa, #c4b5fd
+
+### talk-to-your-data
+Ask questions about a database in plain English and get back SQL, a chart, and a summary — a staged NLU/NER/text-to-SQL/NLG pipeline (spaCy schema linking, sqlglot-validated read-only queries, Llama 3.1 via Groq) instead of a multi-agent framework.
+- Tags: spaCy, sqlglot, Groq (Llama 3.1), FastAPI, React
+- Link: https://github.com/vrnarenkumar/talk-to-your-data
+- Demo: talk-to-data
+- Color: #34d399, #6ee7b7
+
+### weather-vision-lora
+Fine-tuned a Vision Transformer with LoRA (PEFT) to classify road/weather conditions from images — 90% accuracy training only 0.35% of parameters, tracked end-to-end with MLflow. Framed as a proof-of-concept perception module for automotive systems, e.g. feeding a TPMS to auto-adjust tire pressure for detected road conditions.
+- Tags: PyTorch, Hugging Face Transformers, PEFT/LoRA, MLflow
+- Link: https://github.com/vrnarenkumar/weather-vision-lora
+- Images: class-samples.jpg, loss-accuracy.png, confusion-matrix.png, sample-predictions.jpg
+- Color: #fbbf24, #fde68a
 
 ## Education
 
 **B.E., Computer Science and Engineering** — Sri Shakthi Institute of Engineering and Technology, Coimbatore — May 2017 – May 2021
 
 ## Skills
+
+<!-- PORTFOLIO SKILLS
+This section powers the skills slide on the website.
+To add a skill, append it to the comma-separated list under the right category.
+To add a category, copy the two lines below. No UI code is required.
+
+### Category name
+Skill one, Skill two, Skill three
+-->
 
 ### Languages
 Python, Node.js, React, SQL

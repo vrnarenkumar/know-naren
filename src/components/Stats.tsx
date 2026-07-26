@@ -1,13 +1,13 @@
 import { motion } from 'framer-motion'
-import { Clock, DollarSign, Rocket, Users } from 'lucide-react'
+import { Clock, Database, DollarSign, Rocket, Users } from 'lucide-react'
 import { stats } from '../content'
 
-const icons = [Clock, Users, Rocket, DollarSign]
+const icons = [Clock, Users, Rocket, DollarSign, Database]
 
 export default function Stats() {
   return (
     <div className="mx-auto w-full max-w-5xl px-6">
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
         {stats.map((s, i) => {
           const Icon = icons[i]
           return (
@@ -23,6 +23,7 @@ export default function Stats() {
               <Icon size={20} className="text-accent-2" />
               <p className="mt-3 text-2xl font-bold text-text-h">{s.value}</p>
               <p className="text-xs text-text-dim">{s.label}</p>
+              <p className="mt-0.5 text-[10px] text-text-dim/70">{s.source}</p>
             </motion.div>
           )
         })}

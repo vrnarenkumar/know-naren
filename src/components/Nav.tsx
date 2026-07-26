@@ -53,7 +53,7 @@ export default function Nav() {
       )}
 
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-4">
-        <a href="#hero" className="font-semibold text-text-h" onClick={() => setMenuOpen(false)}>
+        <a href="#landing-page" className="font-semibold text-text-h" onClick={() => setMenuOpen(false)}>
           NK<span className="text-accent">.</span>
         </a>
 

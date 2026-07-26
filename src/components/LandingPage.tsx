@@ -1,14 +1,8 @@
 import { motion } from 'framer-motion'
-import { Download, Github, Linkedin, Mail } from 'lucide-react'
+import { Download, Github, Home, Linkedin, Mail } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { hero } from '../content'
 import narenPhoto from '../assets/naren.jpg'
-
-const badges = [
-  { label: 'Python', className: 'left-[-1.5rem] top-6' },
-  { label: 'LangGraph', className: 'right-[-2rem] top-1/3' },
-  { label: 'AWS', className: 'bottom-2 left-2' },
-]
 
 function useTypewriter(words: string[]) {
   const [text, setText] = useState('')
@@ -42,25 +36,37 @@ function useTypewriter(words: string[]) {
   return text
 }
 
-export default function Hero() {
+export default function LandingPage() {
   const role = useTypewriter(hero.roles)
 
   return (
     <section
-      id="hero"
+      id="landing-page"
       className="bg-hero-gradient relative flex min-h-[calc(100vh-4rem)] w-full snap-start snap-always items-center overflow-hidden px-6"
     >
       <div className="relative mx-auto grid w-full max-w-5xl items-center gap-16 lg:grid-cols-[1.2fr_1fr]">
         <div className="text-center lg:text-left">
-          <motion.span
-            initial={{ opacity: 0, y: 12 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, ease: 'easeOut' }}
-            className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-text-dim"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
-            {hero.eyebrow}
-          </motion.span>
+          <div className="flex flex-wrap items-center justify-center gap-2 lg:justify-start">
+            <motion.span
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-text-dim"
+            >
+              <Home size={12} className="text-emerald-400" />
+              {hero.hometown}
+            </motion.span>
+
+            <motion.span
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.05, ease: 'easeOut' }}
+              className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-text-dim"
+            >
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+              {hero.eyebrow}
+            </motion.span>
+          </div>
 
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
@@ -86,7 +92,7 @@ export default function Hero() {
             transition={{ duration: 0.6, delay: 0.3, ease: 'easeOut' }}
             className="mx-auto mt-5 max-w-xl text-text-dim lg:mx-0"
           >
-            {hero.summary}
+            {hero.tagline}
           </motion.p>
 
           <motion.div
@@ -139,17 +145,6 @@ export default function Hero() {
             alt={hero.name}
             className="absolute inset-1.5 rounded-full border-4 border-bg object-cover"
           />
-
-          {badges.map((b, i) => (
-            <motion.span
-              key={b.label}
-              animate={{ y: [0, -10, 0] }}
-              transition={{ duration: 3, delay: i * 0.4, repeat: Infinity, ease: 'easeInOut' }}
-              className={`absolute ${b.className} rounded-full border border-border bg-surface px-3 py-1 text-xs font-medium text-text shadow-lg`}
-            >
-              {b.label}
-            </motion.span>
-          ))}
         </motion.div>
       </div>
     </section>

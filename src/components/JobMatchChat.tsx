@@ -135,37 +135,45 @@ export default function JobMatchChat() {
   }
 
   const conversation = (
-    <div ref={scrollRef} className="min-h-0 flex-1 space-y-4 overflow-y-auto px-4 py-4">
-      <div className="flex gap-2">
-        <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
+    <div
+      ref={scrollRef}
+      className="min-h-0 flex-1 space-y-5 overflow-y-auto overscroll-contain px-5 py-5 [overflow-wrap:anywhere]"
+    >
+      <div className="flex gap-3">
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-accent">
           <Sparkles size={14} />
         </div>
-        <div className="max-w-[85%] rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2 text-sm text-text">
+        <div className="max-w-[85%] rounded-2xl rounded-tl-md bg-surface-2 px-4 py-3 text-[13px] leading-5 text-text">
           Hi, I'm Naren. Paste a job description and I'll show you why I'd be a great fit — or just ask me
           something, like "do you have experience with ADK?"
         </div>
       </div>
 
       {turns.map((turn) => (
-        <div key={turn.id} className="space-y-3">
+        <div key={turn.id} className="space-y-4">
           <div className="flex justify-end">
-            <div className="max-w-[85%] rounded-2xl rounded-tr-sm bg-gradient-to-r from-accent to-accent-2 px-3 py-2 text-sm text-black">
+            <div className="max-w-[85%] rounded-2xl rounded-tr-md bg-gradient-to-r from-accent to-accent-2 px-4 py-2.5 text-[15px] leading-6 text-black">
               {turn.userLabel}
             </div>
           </div>
 
-          <div className="flex gap-2">
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-surface-2 text-accent">
+          <div className="flex gap-3">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-xl bg-surface-2 text-accent">
               <Sparkles size={14} />
             </div>
-            <div className="max-w-[90%] flex-1 rounded-2xl rounded-tl-sm bg-surface-2 px-3 py-2.5 text-sm">
-              {turn.steps.length > 0 && <StepList steps={turn.steps} />}
-              {turn.error && <p className="text-red-300">{turn.error}</p>}
-              {turn.redirect && <p className="text-text">{turn.redirect}</p>}
-              {turn.answer && <p className="text-text">{renderRichText(turn.answer, turn.userLabel)}</p>}
+            <div className="min-w-0 max-w-[90%] flex-1 rounded-2xl rounded-tl-md bg-surface-2 px-4 py-4">
+              {turn.steps.length > 0 && (
+                <div className={turn.answer || turn.summary || turn.error || turn.redirect ? 'border-b border-border pb-4' : ''}>
+                  <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-text-dim">Processing</p>
+                  <StepList steps={turn.steps} />
+                </div>
+              )}
+              {turn.error && <p className="pt-4 text-[15px] leading-7 text-red-300">{turn.error}</p>}
+              {turn.redirect && <p className="pt-4 text-[15px] leading-7 text-text">{turn.redirect}</p>}
+              {turn.answer && <p className="pt-4 text-[15px] leading-7 tracking-[0.002em] text-text">{renderRichText(turn.answer, turn.userLabel)}</p>}
               {turn.summary && (
-                <div className="space-y-3">
-                  <p className="text-text">{highlightMatches(turn.summary, turn.userLabel)}</p>
+                <div className="space-y-4 pt-4">
+                  <p className="text-[15px] leading-7 tracking-[0.002em] text-text">{highlightMatches(turn.summary, turn.userLabel)}</p>
                   {turn.projects && turn.projects.length > 0 && (
                     <div className="space-y-2">
                       {turn.projects.map((p) => (
@@ -173,7 +181,7 @@ export default function JobMatchChat() {
                       ))}
                     </div>
                   )}
-                  {turn.closing && <p className="text-text">{highlightMatches(turn.closing, turn.userLabel)}</p>}
+                  {turn.closing && <p className="text-[15px] leading-7 tracking-[0.002em] text-text">{highlightMatches(turn.closing, turn.userLabel)}</p>}
                 </div>
               )}
               {turn.running && turn.steps.length === 0 && (
@@ -191,7 +199,7 @@ export default function JobMatchChat() {
   )
 
   const composer = (
-    <div className="shrink-0 border-t border-border p-3">
+    <div className="shrink-0 border-t border-border bg-surface p-3">
       {file && (
         <div className="mb-2 flex items-center gap-2 rounded-lg border border-border bg-surface-2 px-2.5 py-1.5 text-xs text-text-dim">
           <FileText size={14} className="text-accent" />
@@ -222,7 +230,7 @@ export default function JobMatchChat() {
           }}
           placeholder="Paste a JD or ask a question…"
           rows={1}
-          className="max-h-24 flex-1 resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm text-text placeholder:text-text-dim focus:border-accent focus:outline-none"
+          className="max-h-24 min-h-9 flex-1 resize-none rounded-lg border border-border bg-surface-2 px-3 py-2 text-sm leading-5 text-text placeholder:text-text-dim focus:border-accent focus:outline-none"
         />
         <button
           type="button"
@@ -235,7 +243,7 @@ export default function JobMatchChat() {
         </button>
       </div>
       {!API_URL && <p className="mt-2 text-[11px] text-text-dim">Demo server isn't configured yet.</p>}
-      <p className="mt-2 text-[11px] text-text-dim">
+      <p className="mt-2 text-[11px] leading-4 text-text-dim">
         Chat responses may be wrong or out of date — please consider my{' '}
         <a href={`${import.meta.env.BASE_URL}resume.pdf`} target="_blank" rel="noreferrer" className="underline hover:text-text-h">
           resume
@@ -250,7 +258,7 @@ export default function JobMatchChat() {
   )
 
   return (
-    <div className={`fixed bottom-24 right-6 flex flex-col items-end gap-3 ${fullscreen ? 'z-[70]' : 'z-40'}`}>
+    <div className={`fixed bottom-20 right-4 ${fullscreen ? 'z-[70]' : 'z-40'} sm:right-6`}>
       <AnimatePresence>
         {open && (
           <motion.div
@@ -262,18 +270,18 @@ export default function JobMatchChat() {
             className={
               fullscreen
                 ? 'fixed inset-0 z-[70] flex flex-col overflow-hidden border border-border bg-surface shadow-2xl'
-                : `flex flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-2xl transition-[width,height] duration-300 ease-out ${
+                : `flex flex-col overflow-hidden rounded-2xl border border-border bg-surface shadow-2xl transition-[width,height] duration-300 ease-out ${
                     expanded
-                      ? 'h-[42rem] max-h-[min(85vh,calc(100vh_-_10.5rem))] w-[min(30rem,calc(100vw-3rem))]'
-                      : 'h-[28rem] max-h-[min(70vh,calc(100vh_-_10.5rem))] w-[min(24rem,calc(100vw-3rem))]'
+                      ? 'h-[min(38rem,calc(100dvh-6.5rem))] w-[min(30rem,calc(100vw-2rem))]'
+                      : 'h-[min(34rem,calc(100dvh-6.5rem))] w-[min(26rem,calc(100vw-2rem))]'
                   }`
             }
           >
             <div className="h-1.5 shrink-0 bg-gradient-to-r from-accent to-accent-2" />
-            <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-4 py-3">
-              <div>
+            <div className="flex shrink-0 items-start justify-between gap-3 border-b border-border px-4 py-3">
+              <div className="min-w-0">
                 <p className="text-sm font-semibold text-text-h">Ask about me</p>
-                <p className="text-xs text-text-dim">Paste a JD, or ask if I have experience with something.</p>
+                <p className="mt-0.5 text-xs leading-5 text-text-dim">Paste a JD, or ask if I have experience with something.</p>
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 {fullscreen ? (
@@ -326,11 +334,11 @@ export default function JobMatchChat() {
         )}
       </AnimatePresence>
 
-      {!fullscreen && (
+      {!open && !fullscreen && (
         <motion.button
           type="button"
-          onClick={() => (open ? closeWidget() : setOpen(true))}
-          aria-label={open ? 'Close JD Match chat' : 'Open JD Match chat'}
+          onClick={() => setOpen(true)}
+          aria-label="Open JD Match chat"
           whileHover={{ scale: 1.05 }}
           className="relative flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-r from-accent to-accent-2 text-black shadow-lg"
         >

@@ -1,24 +1,28 @@
 import resumeRaw from '../RESUME.md?raw'
 import { parseSkillsFromMarkdown } from './lib/parseSkills'
+import { parseProjectsFromMarkdown, type ResumeProject } from './lib/parseProjects'
 
 export const hero = {
   name: 'Narenkumar V R',
   title: 'Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure',
   roles: ['Generative AI', 'Agentic Systems', 'Machine Learning Operations', 'AI Systems & Infrastructure', 'Cloud Architect'],
   eyebrow: 'Shipping AI Systems at Ford Motor Co.',
-  summary:
-    'Senior Software Engineer (AI/ML) with 5+ years of experience shipping and scaling AI solutions end-to-end, from prototype to production.',
+  tagline: 'Shipping and scaling AI/ML systems end-to-end — from prototype to production.',
+  about:
+    "I don't just build platforms — I architect and productionize them. From designing APIs, backend services, and stateful workflows to fine-tuning and evaluating models, I engineer the systems around them: evaluation gates, cost-aware routing across open and closed-source LLMs, automated ML workflows through CI/CD, and scalable deployments across cloud and Kubernetes environments designed to handle concurrent, high-throughput workloads.",
   location: 'Chennai, India (open to relocate)',
+  hometown: 'Ooty, India',
   email: 'vrnarenkumar@gmail.com',
   linkedin: 'https://linkedin.com/in/vrnarenkumar',
   github: 'https://github.com/vrnarenkumar',
 }
 
-export const stats: { label: string; value: string }[] = [
-  { label: 'Years Experience', value: '5+' },
-  { label: 'Users Impacted', value: '10K+' },
-  { label: 'Faster Deployments', value: '70%' },
-  { label: 'Saved / Year', value: '$50K+' },
+export const stats: { label: string; value: string; source: string }[] = [
+  { label: 'Years Experience', value: '5+', source: 'Since 2021' },
+  { label: 'Users Impacted', value: '10K+', source: 'AI Notebook (RAG assistant)' },
+  { label: 'Faster Deployments', value: '70%', source: 'Multi-Agent MLOps Platform' },
+  { label: 'Saved / Year', value: '$50K+', source: 'LLM cost-aware routing (SmartFMA)' },
+  { label: 'Data Processed', value: '3TB+', source: 'MetaPix Data Platform' },
 ]
 
 export type ExperienceProject = {
@@ -122,47 +126,13 @@ export const experience: ExperienceRole[] = [
   },
 ]
 
-export type Project = {
-  name: string
-  description: string
-  tags: string[]
-  link?: string
-  demo?: 'describe-ai' | 'notebook-agent'
-  color?: { base: string; light: string }
-}
+export type Project = ResumeProject
 
-export const projects: Project[] = [
-  {
-    name: 'describe-ai',
-    description:
-      'Give it a public GitHub repo URL and it clones the repo, analyses the codebase with an LLM, and generates a full README.md — live, in your browser.',
-    tags: ['LangGraph', 'Groq (Llama 3.1)', 'PyGithub', 'FastAPI'],
-    link: 'https://github.com/vrnarenkumar/describe-ai',
-    demo: 'describe-ai',
-    color: { base: '#38bdf8', light: '#7dd3fc' },
-  },
-  {
-    name: 'notebook-agent',
-    description:
-      'Upload a PDF and ask it questions — chunked, embedded, and indexed on the fly, with answers grounded in your document via retrieval-augmented generation.',
-    tags: ['sentence-transformers', 'FAISS', 'Groq (Llama 3.1)', 'FastAPI'],
-    link: 'https://github.com/vrnarenkumar/notebook-agent',
-    demo: 'notebook-agent',
-    color: { base: '#a78bfa', light: '#c4b5fd' },
-  },
-  {
-    name: 'talk-to-your-data',
-    description:
-      'A full-stack, locally hosted "talk to your data" analytics chatbot that turns natural-language questions into read-only SQL and charts, with basic Q&A for users to interact with their data and a pluggable multi-data source connector layer for any type of DB.',
-    tags: ['CrewAI', 'Ollama', 'FastAPI', 'React'],
-    color: { base: '#34d399', light: '#6ee7b7' },
-    link: 'https://github.com/vrnarenkumar',
-  },
-]
+// Projects and skills live in RESUME.md, so a new entry needs no UI code.
+export const projects: Project[] = parseProjectsFromMarkdown(resumeRaw)
 
-// Sourced live from RESUME.md's "## Skills" section — add a new "### Category"
-// heading or extend an existing category's comma-separated line there and it
-// shows up here automatically, no code changes needed.
+// Sourced live from RESUME.md's "## Skills" section — update a comma-separated
+// list or add a new "### Category" heading to update the site.
 export const skills: { category: string; items: string[] }[] = parseSkillsFromMarkdown(resumeRaw)
 
 export const education = {

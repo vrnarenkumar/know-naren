@@ -3,7 +3,8 @@ export function parseSkillsFromMarkdown(markdown: string): { category: string; i
   const sectionMatch = markdown.match(/## Skills\n([\s\S]*?)(?:\n## |$)/)
   if (!sectionMatch) return []
 
-  const section = sectionMatch[1]
+  // Authoring notes in HTML comments stay in the résumé without becoming skills.
+  const section = sectionMatch[1].replace(/<!--[\s\S]*?-->/g, '')
   const blocks = section.split(/^### /m).filter((b) => b.trim())
 
   return blocks.map((block) => {

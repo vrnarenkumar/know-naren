@@ -43,14 +43,16 @@ export default function Experience() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, amount: 0.6 }}
                 transition={{ duration: 0.4, delay: i * 0.12, ease: 'easeOut' }}
-                className="group flex w-32 flex-col items-center gap-3 text-center"
+                className="group flex w-32 flex-col items-center gap-3 text-center cursor-pointer"
               >
                 <span className="relative flex h-4 w-4 items-center justify-center">
                   <span className="absolute h-4 w-4 animate-ping rounded-full bg-accent/50" />
                   <span className="relative h-3 w-3 rounded-full bg-accent shadow-[0_0_12px_rgba(255,255,255,0.7)] ring-4 ring-bg transition-transform group-hover:scale-125" />
                 </span>
                 <span>
-                  <span className="block text-sm font-semibold text-text-h">{r.title}</span>
+                  <span className="block text-sm font-semibold text-text-h underline decoration-transparent underline-offset-4 transition-colors group-hover:text-accent group-hover:decoration-accent/50">
+                    {r.title}
+                  </span>
                   <span className="mt-0.5 block text-xs text-accent">{r.company.split(' (')[0]}</span>
                   <span className="mt-0.5 block text-xs text-text-dim">{r.dates}</span>
                 </span>

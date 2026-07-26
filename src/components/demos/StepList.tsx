@@ -13,27 +13,27 @@ export default function StepList({ steps }: { steps: Step[] }) {
   if (steps.length === 0) return null
 
   return (
-    <ul className="mt-4 space-y-3">
+    <ul className="space-y-3">
       {steps.map((s) => (
-        <li key={s.step} className="flex items-start gap-3">
+        <li key={s.step} className="flex items-start gap-2.5">
           {s.status === 'running' && (
-            <Loader2 size={16} className="mt-0.5 shrink-0 animate-spin text-text-dim" />
+            <Loader2 size={15} className="mt-0.5 shrink-0 animate-spin text-text-dim" />
           )}
-          {s.status === 'done' && <CheckCircle2 size={16} className="mt-0.5 shrink-0 text-accent" />}
-          {s.status === 'error' && <XCircle size={16} className="mt-0.5 shrink-0 text-red-400" />}
-          <div>
-            <p className="text-sm font-medium text-text-h">{s.label}</p>
-            <div className="mt-1 flex flex-wrap gap-1.5">
-              {s.tech.map((t) => (
+          {s.status === 'done' && <CheckCircle2 size={15} className="mt-0.5 shrink-0 text-accent" />}
+          {s.status === 'error' && <XCircle size={15} className="mt-0.5 shrink-0 text-red-400" />}
+          <div className="min-w-0">
+            <p className="text-[13px] font-medium leading-5 text-text-h">{s.label}</p>
+            <div className="mt-1.5 flex flex-wrap gap-1">
+              {(s.tech ?? []).map((t) => (
                 <span
                   key={t}
-                  className="rounded-full border border-accent/30 bg-accent/10 px-2 py-0.5 text-[11px] text-accent"
+                  className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-[10px] leading-4 text-text-dim"
                 >
                   {t}
                 </span>
               ))}
             </div>
-            {s.detail && <p className="mt-1 text-xs text-text-dim">{s.detail}</p>}
+            {s.detail && <p className="mt-1.5 break-words text-[12px] leading-5 text-text-dim">{s.detail}</p>}
           </div>
         </li>
       ))}
