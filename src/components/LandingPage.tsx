@@ -1,5 +1,5 @@
 import { AnimatePresence, motion } from 'framer-motion'
-import { Download, Github, Home, Linkedin, Mail } from 'lucide-react'
+import { Download, Github, Linkedin, Mail, MapPin } from 'lucide-react'
 import { useEffect, useState } from 'react'
 import { hero } from '../content'
 import narenPhoto from '../assets/naren.jpg'
@@ -55,7 +55,7 @@ export default function LandingPage() {
               transition={{ duration: 0.5, ease: 'easeOut' }}
               className="inline-flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-1.5 text-xs font-medium text-text-dim"
             >
-              <Home size={12} className="text-emerald-400" />
+              <MapPin size={12} className="text-emerald-400" />
               {hero.hometown}
             </motion.span>
 
