@@ -5,7 +5,7 @@ Senior Software Engineer — ML / MLOps / GenAI / AI Systems & Infrastructure
 - Email: vrnarenkumar@gmail.com
 - LinkedIn: https://linkedin.com/in/vrnarenkumar
 - GitHub: https://github.com/vrnarenkumar
-- Location: Chennai, India (open to relocate)
+- Location: Chennai, India
 
 ## Summary
 
