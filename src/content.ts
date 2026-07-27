@@ -12,7 +12,7 @@ export const hero = {
   about:
     "I don't just build platforms — I architect and productionize them. From designing APIs, backend services, and stateful workflows to fine-tuning and evaluating models, I engineer the systems around them: evaluation gates, cost-aware routing across open and closed-source LLMs, automated ML workflows through CI/CD, and scalable deployments across cloud and Kubernetes environments designed to handle concurrent, high-throughput workloads.",
   location: 'Chennai, India',
-  hometown: 'Ooty, India',
+  hometown: 'Chennai, India (open to relocate)',
   email: 'vrnarenkumar@gmail.com',
   linkedin: 'https://linkedin.com/in/vrnarenkumar',
   github: 'https://github.com/vrnarenkumar',
